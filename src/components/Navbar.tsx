@@ -1,46 +1,49 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, Menu, X, Search, Phone, ChevronDown } from 'lucide-react';
+import { ShoppingCart, Menu, X, Search, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
-
-const navLinks = [
-  {
-    label: 'Laptops',
-    href: '/laptops',
-    dropdown: [
-      { label: 'All Laptops', href: '/laptops' },
-      { label: 'Refurbished', href: '/laptops?condition=Refurbished' },
-      { label: 'New Laptops', href: '/laptops?condition=New' },
-      { label: 'Business', href: '/laptops?tag=business' },
-    ],
-  },
-  {
-    label: 'Parts & Accessories',
-    href: '/parts',
-    dropdown: [
-      { label: 'All Parts', href: '/parts' },
-      { label: 'Batteries', href: '/parts?tag=battery' },
-      { label: 'Screens', href: '/parts?tag=screen' },
-      { label: 'Storage & RAM', href: '/parts?tag=upgrade' },
-      { label: 'Chargers', href: '/parts?tag=charger' },
-    ],
-  },
-  { label: 'Repair Services', href: '/services' },
-  { label: 'About', href: '/about' },
-];
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const { totalItems } = useCart();
   const location = useLocation();
+  const { t } = useTranslation();
+
+  const navLinks = [
+    {
+      label: t('nav.laptops'),
+      href: '/laptops',
+      dropdown: [
+        { label: t('nav.allLaptops'), href: '/laptops' },
+        { label: t('nav.refurbished'), href: '/laptops?condition=Refurbished' },
+        { label: t('nav.newLaptops'), href: '/laptops?condition=New' },
+        { label: t('nav.business'), href: '/laptops?tag=business' },
+      ],
+    },
+    {
+      label: t('nav.partsAccessories'),
+      href: '/parts',
+      dropdown: [
+        { label: t('nav.allParts'), href: '/parts' },
+        { label: t('nav.batteries'), href: '/parts?tag=battery' },
+        { label: t('nav.screens'), href: '/parts?tag=screen' },
+        { label: t('nav.storageRam'), href: '/parts?tag=upgrade' },
+        { label: t('nav.chargers'), href: '/parts?tag=charger' },
+      ],
+    },
+    { label: t('nav.repairServices'), href: '/services' },
+    { label: t('nav.about'), href: '/about' },
+  ];
 
   return (
     <>
       {/* Top bar */}
       <div className="bg-secondary text-secondary-foreground py-1.5 text-xs text-center font-medium tracking-wide">
-        🚚 Free shipping on orders over $100 &nbsp;·&nbsp; 📞 Expert support: <a href="tel:+15551234567" className="underline underline-offset-2">+1 (555) 123-4567</a>
+        {t('topBar')} <a href="tel:+15551234567" className="underline underline-offset-2">+1 (555) 123-4567</a>
       </div>
 
       <header className="sticky top-0 z-50 bg-card border-b border-border shadow-sm">
@@ -78,7 +81,7 @@ export default function Navbar() {
                   </Link>
 
                   {link.dropdown && activeDropdown === link.label && (
-                    <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-xl shadow-lg py-2 min-w-[180px] z-50">
+                    <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-xl shadow-lg py-2 min-w-[180px] z-50 rtl:left-auto rtl:right-0">
                       {link.dropdown.map(item => (
                         <Link
                           key={item.href}
@@ -96,10 +99,12 @@ export default function Navbar() {
 
             {/* Right actions */}
             <div className="flex items-center gap-2">
+              <LanguageSwitcher />
+
               <Link
                 to="/search"
                 className="hidden sm:flex w-9 h-9 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                aria-label="Search"
+                aria-label={t('nav.search')}
               >
                 <Search className="w-4 h-4" />
               </Link>
@@ -107,7 +112,7 @@ export default function Navbar() {
               <Link
                 to="/cart"
                 className="relative flex w-9 h-9 items-center justify-center rounded-lg text-foreground hover:text-primary hover:bg-primary/5 transition-colors"
-                aria-label={`Cart (${totalItems} items)`}
+                aria-label={`Cart (${totalItems})`}
               >
                 <ShoppingCart className="w-5 h-5" />
                 {totalItems > 0 && (
@@ -123,7 +128,7 @@ export default function Navbar() {
                 className="hidden sm:inline-flex"
                 asChild
               >
-                <Link to="/services">Book Repair</Link>
+                <Link to="/services">{t('nav.bookRepair')}</Link>
               </Button>
 
               <button
@@ -151,7 +156,7 @@ export default function Navbar() {
                     {link.label}
                   </Link>
                   {link.dropdown && (
-                    <div className="ml-4 mt-1 space-y-1">
+                    <div className="ml-4 rtl:ml-0 rtl:mr-4 mt-1 space-y-1">
                       {link.dropdown.map(item => (
                         <Link
                           key={item.href}
@@ -168,7 +173,7 @@ export default function Navbar() {
               ))}
               <div className="pt-2 pb-1">
                 <Button className="w-full" asChild onClick={() => setMobileOpen(false)}>
-                  <Link to="/services">Book a Repair</Link>
+                  <Link to="/services">{t('nav.bookRepair')}</Link>
                 </Button>
               </div>
             </nav>

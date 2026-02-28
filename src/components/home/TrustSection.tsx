@@ -1,42 +1,58 @@
-import { useLanguage } from '@/contexts/LanguageContext';
-import { Shield, Truck, Headphones, Award } from 'lucide-react';
+import { Shield, Truck, Headphones, Award, CreditCard, RotateCcw } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const TrustSection = () => {
-  const { t } = useLanguage();
-
   const items = [
-    { icon: Award, title: t('trust.quality'), desc: t('trust.qualityDesc') },
-    { icon: Shield, title: t('trust.warranty'), desc: t('trust.warrantyDesc') },
-    { icon: Truck, title: t('trust.shipping'), desc: t('trust.shippingDesc') },
-    { icon: Headphones, title: t('trust.support'), desc: t('trust.supportDesc') },
+    { 
+        icon: Truck, 
+        title: 'LIVRAISON PARTOUT', 
+        desc: 'AU MAROC SOUS 24/48H',
+        color: 'text-primary'
+    },
+    { 
+        icon: Shield, 
+        title: 'GARANTIE OFFICIELLE', 
+        desc: 'TOUS NOS PRODUITS SONT GARANTIS',
+        color: 'text-accent'
+    },
+    { 
+        icon: CreditCard, 
+        title: 'PAIEMENT SECURISÉ', 
+        desc: 'CASH ON DELIVERY & CMI',
+        color: 'text-success'
+    },
+    { 
+        icon: Headphones, 
+        title: 'SUPPORT TECH 7J/7', 
+        desc: 'UNE EQUIPE A VOTRE ECOUTE',
+        color: 'text-primary'
+    },
   ];
 
   return (
-    <section className="py-16 lg:py-24">
-      <div className="container mx-auto px-4 lg:px-8">
-        <div className="mb-12 text-center">
-          <h2 className="font-display text-3xl font-bold text-foreground sm:text-4xl">
-            {t('trust.title')}
-          </h2>
-          <p className="mt-3 text-muted-foreground">{t('trust.subtitle')}</p>
-        </div>
-
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <section className="py-20 lg:py-32 border-t border-border/50 bg-white">
+      <div className="container mx-auto px-4 lg:px-12">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {items.map((item, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="flex flex-col items-center rounded-xl border bg-card p-6 text-center shadow-soft transition-all hover:shadow-hover"
+              transition={{ delay: i * 0.1, duration: 0.5 }}
+              className="flex items-center gap-6 group hover:translate-x-2 transition-transform duration-300"
             >
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-                <item.icon className="h-6 w-6 text-primary" />
+              <div className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-secondary/50 transition-all duration-300 group-hover:bg-primary group-hover:shadow-xl group-hover:shadow-primary/20 ${item.color}`}>
+                <item.icon className="h-7 w-7 transition-colors group-hover:text-white" />
               </div>
-              <h3 className="font-display text-base font-semibold text-foreground">{item.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.desc}</p>
+              <div className="flex flex-col">
+                <h3 className="text-sm font-black uppercase tracking-widest text-foreground mb-1 group-hover:text-primary transition-colors italic">
+                  {item.title}
+                </h3>
+                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground/60 leading-none">
+                  {item.desc}
+                </p>
+              </div>
             </motion.div>
           ))}
         </div>

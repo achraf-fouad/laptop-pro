@@ -2,7 +2,7 @@ import { Product } from '@/types/product';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Star } from 'lucide-react';
+import { ShoppingCart, Star, Eye, Heart, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface ProductCardProps {
@@ -15,9 +15,9 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
   const { addToCart } = useCart();
 
   const stockLabel =
-    product.stock === 'in_stock' ? t('featured.inStock') :
-    product.stock === 'low_stock' ? t('featured.lowStock') :
-    t('featured.outOfStock');
+    product.stock === 'in_stock' ? 'En Stock' :
+    product.stock === 'low_stock' ? 'Stock Faible' :
+    'Rupture';
 
   const stockColor =
     product.stock === 'in_stock' ? 'text-success' :
@@ -25,66 +25,103 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
     'text-destructive';
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat(language === 'ar' ? 'ar-DZ' : 'fr-DZ').format(price);
+    return new Intl.NumberFormat('fr-MA').format(price);
   };
+
+  const name = product.name[language] || product.name.fr || product.name.en || '';
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 15 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
-      transition={{ delay: index * 0.08 }}
-      className="group flex flex-col rounded-xl border bg-card shadow-soft transition-all hover:shadow-hover overflow-hidden"
+      transition={{ delay: index * 0.05, duration: 0.3 }}
+      className="group relative flex flex-col bg-card border border-border/60 hover:border-primary/30 transition-all duration-300 rounded-lg overflow-hidden h-full"
     >
-      <Link to={`/product/${product.id}`} className="relative aspect-[4/3] overflow-hidden bg-secondary">
-        <img
-          src={product.image}
-          alt={product.name[language] || product.name.fr}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          loading="lazy"
-        />
-        {product.originalPrice && (
-          <span className="absolute start-3 top-3 rounded-md bg-destructive px-2 py-0.5 text-xs font-semibold text-destructive-foreground">
+      {/* Badges */}
+      <div className="absolute top-3 left-3 z-20 flex flex-col gap-1.5 font-black uppercase text-[9px] tracking-widest">
+        {product.originalPrice && product.originalPrice > product.price && (
+          <span className="bg-destructive text-white px-2 py-1 rounded-sm shadow-sm flex items-center gap-1">
+            <Zap className="h-2.5 w-2.5 fill-current" />
             -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
           </span>
         )}
-      </Link>
+        {product.featured && (
+          <span className="bg-primary text-white px-2 py-1 rounded-sm shadow-sm">COUP DE COEUR</span>
+        )}
+      </div>
 
-      <div className="flex flex-1 flex-col p-4">
-        <Link to={`/product/${product.id}`}>
-          <h3 className="font-display text-sm font-semibold text-foreground line-clamp-2 hover:text-primary transition-colors">
-            {product.name[language] || product.name.fr}
+      {/* Image Area */}
+      <div className="relative aspect-square overflow-hidden bg-[#fcfcfc] flex items-center justify-center p-6">
+        <Link to={`/product/${product.id}`} className="w-full h-full">
+          <img
+            src={product.image}
+            alt={name}
+            className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-110"
+            loading="lazy"
+          />
+        </Link>
+        
+        {/* Quick Actions Hover */}
+        <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2 z-10 pointer-events-none group-hover:pointer-events-auto">
+          <button className="h-10 w-10 bg-white rounded-full flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all shadow-lg translate-y-4 group-hover:translate-y-0 duration-300">
+            <Eye className="h-4 w-4" />
+          </button>
+          <button className="h-10 w-10 bg-white rounded-full flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all shadow-lg translate-y-4 group-hover:translate-y-0 duration-300 delay-75">
+            <Heart className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Content Area */}
+      <div className="flex flex-1 flex-col p-4 pt-2 border-t border-border/30">
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
+          {product.category || 'INFORMATIQUE'}
+        </p>
+        
+        <Link to={`/product/${product.id}`} className="flex-1">
+          <h3 className="text-sm font-bold text-foreground leading-tight line-clamp-2 hover:text-primary transition-colors min-h-[2.5rem] mb-2 uppercase">
+            {name}
           </h3>
         </Link>
 
-        <div className="mt-1.5 flex items-center gap-1">
-          <Star className="h-3.5 w-3.5 fill-warning text-warning" />
-          <span className="text-xs font-medium text-foreground">{product.rating}</span>
-          <span className="text-xs text-muted-foreground">({product.reviewCount})</span>
+        {/* Rating */}
+        <div className="flex items-center gap-1 mb-3">
+          {[...Array(5)].map((_, i) => (
+            <Star 
+              key={i} 
+              className={`h-2.5 w-2.5 ${i < Math.floor(product.rating || 0) ? 'fill-accent text-accent' : 'text-muted/40'}`} 
+            />
+          ))}
+          <span className="text-[10px] text-muted-foreground ml-1 font-bold">({product.reviewCount || 0})</span>
         </div>
 
-        <div className="mt-auto pt-3">
-          <div className="flex items-baseline gap-2">
-            <span className="font-display text-lg font-bold text-foreground">
-              {formatPrice(product.price)} {t('currency')}
-            </span>
-            {product.originalPrice && (
-              <span className="text-sm text-muted-foreground line-through">
-                {formatPrice(product.originalPrice)}
+        <div className="mt-auto">
+          <div className="flex flex-col mb-3">
+            {product.originalPrice && product.originalPrice > product.price && (
+              <span className="text-xs text-muted-foreground line-through font-medium">
+                {formatPrice(product.originalPrice)} DH
               </span>
             )}
+            <span className="text-lg font-black text-primary italic tracking-tight">
+              {formatPrice(product.price)} <span className="text-xs font-bold not-italic">DH</span>
+            </span>
           </div>
-          <span className={`text-xs font-medium ${stockColor}`}>{stockLabel}</span>
+          
+          <button
+            onClick={() => addToCart(product)}
+            disabled={product.stock === 'out_of_stock'}
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-secondary py-2.5 text-[10px] font-black uppercase tracking-widest text-foreground transition-all hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed group/btn"
+          >
+            <ShoppingCart className="h-3.5 w-3.5 transition-transform group-hover/btn:-rotate-12" />
+            AJOUTER AU PANIER
+          </button>
+          
+          <div className="mt-2 flex items-center justify-between text-[8px] font-black uppercase tracking-wider">
+            <span className={stockColor}>{stockLabel}</span>
+            <span className="text-muted-foreground/40">REF: {product.id.toString().padStart(6, '0')}</span>
+          </div>
         </div>
-
-        <button
-          onClick={() => addToCart(product)}
-          disabled={product.stock === 'out_of_stock'}
-          className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <ShoppingCart className="h-4 w-4" />
-          {t('featured.addToCart')}
-        </button>
       </div>
     </motion.div>
   );

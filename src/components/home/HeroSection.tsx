@@ -1,62 +1,126 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
-import heroImage from '@/assets/hero-laptop.jpg';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, ChevronLeft, ChevronRight, Play } from 'lucide-react';
+import { useState, useEffect } from 'react';
+
+const slides = [
+  {
+    image: '/images/banners/hero.png',
+    tag: 'GAMING PC',
+    title: 'PC Gamer High-End',
+    subtitle: 'Performance Ultime',
+    description: 'DOMINEZ LE JEU AVEC NOS PC GAMERS ÉQUIPÉS DES DERNIÈRES CARTES GRAPHIQUES RTX.',
+    cta: 'Voir les Offres',
+    link: '/products?category=gaming',
+    btnColor: 'bg-primary'
+  },
+  {
+    image: '/images/banners/monitors.png',
+    tag: 'PRO DISPLAYS',
+    title: 'Moniteurs 4K UltraWide',
+    subtitle: 'Clarté de Cristal',
+    description: 'UNE IMMERSION TOTALE POUR VOTRE TRAVAIL ET VOS DIVERTISSEMENTS.',
+    cta: 'Découvrir',
+    link: '/products?category=screens',
+    btnColor: 'bg-accent'
+  }
+];
 
 const HeroSection = () => {
   const { t } = useLanguage();
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % slides.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <section className="relative overflow-hidden bg-gradient-subtle">
-      <div className="container mx-auto px-4 lg:px-8">
-        <div className="grid min-h-[520px] items-center gap-8 py-12 lg:grid-cols-2 lg:py-20">
-          {/* Text */}
+    <section className="relative h-[480px] lg:h-[600px] overflow-hidden bg-[#111]">
+      {/* Background Slides */}
+      <AnimatePresence mode="wait">
+        <motion.div
+           key={current}
+           initial={{ opacity: 0, scale: 1.05 }}
+           animate={{ opacity: 1, scale: 1 }}
+           exit={{ opacity: 0 }}
+           transition={{ duration: 0.8, ease: "easeOut" }}
+           className="absolute inset-0"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-10" />
+          <img
+            src={slides[current].image}
+            alt={slides[current].title}
+            className="w-full h-full object-cover"
+          />
+        </motion.div>
+      </AnimatePresence>
+
+      <div className="container mx-auto px-4 lg:px-12 relative z-20 h-full flex items-center">
+        <div className="max-w-2xl text-white">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="max-w-xl"
+            key={`content-${current}`}
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <h1 className="font-display text-4xl font-extrabold leading-tight tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              {t('hero.title')}{' '}
-              <span className="text-gradient">{t('hero.subtitle')}</span>
+            <span className="inline-block px-3 py-1 bg-primary text-[10px] font-black tracking-widest uppercase mb-4 rounded-sm">
+              {slides[current].tag}
+            </span>
+            <h1 className="text-4xl lg:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-4">
+              {slides[current].title} <br />
+              <span className="text-primary italic">{slides[current].subtitle}</span>
             </h1>
-            <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
-              {t('hero.description')}
+            <p className="text-sm lg:text-lg text-white/70 font-medium uppercase tracking-wide max-w-lg mb-8">
+              {slides[current].description}
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="flex items-center gap-4">
               <Link
-                to="/products"
-                className="inline-flex items-center gap-2 rounded-lg bg-gradient-hero px-6 py-3 font-display text-sm font-semibold text-primary-foreground shadow-soft transition-all hover:shadow-hover hover:scale-[1.02]"
+                to={slides[current].link}
+                className={`${slides[current].btnColor} text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-widest hover:scale-110 transition-transform shadow-lg shadow-primary/20 flex items-center gap-2`}
               >
-                {t('hero.cta')}
+                {slides[current].cta}
                 <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link
-                to="/products?category=laptops"
-                className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-6 py-3 font-display text-sm font-semibold text-foreground shadow-soft transition-all hover:bg-secondary"
-              >
-                {t('hero.secondary')}
-              </Link>
+              <button className="flex items-center gap-2 group">
+                <div className="h-12 w-12 rounded-full border-2 border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
+                  <Play className="h-4 w-4 fill-current" />
+                </div>
+                <span className="text-xs font-bold uppercase tracking-widest">Vidéo</span>
+              </button>
             </div>
           </motion.div>
-
-          {/* Image */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="flex justify-center lg:justify-end"
-          >
-            <img
-              src={heroImage}
-              alt="bh-tech Premium Laptop"
-              className="w-full max-w-lg rounded-2xl shadow-elevated object-cover"
-              loading="eager"
-            />
-          </motion.div>
         </div>
+      </div>
+
+      {/* Navigation */}
+      <div className="absolute bottom-8 right-8 z-30 flex items-center gap-3">
+        <button 
+          onClick={() => setCurrent((prev) => (prev - 1 + slides.length) % slides.length)}
+          className="h-10 w-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-black transition-all"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+        <button 
+          onClick={() => setCurrent((prev) => (prev + 1) % slides.length)} 
+          className="h-10 w-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-black transition-all"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Indicators */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrent(i)}
+            className={`h-1 transition-all rounded-full ${current === i ? 'w-12 bg-primary' : 'w-4 bg-white/20'}`}
+          />
+        ))}
       </div>
     </section>
   );

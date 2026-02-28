@@ -1,19 +1,40 @@
-import { useState, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { products, categories, brands } from '@/data/products';
+import { categories, brands } from '@/data/products';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/products/ProductCard';
-import { SlidersHorizontal, X } from 'lucide-react';
+import { SlidersHorizontal, X, RefreshCw, ChevronRight, Home, LayoutGrid, List } from 'lucide-react';
+import api from '@/lib/api';
+import { Product } from '@/types/product';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Products = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryParam = searchParams.get('category') || '';
   const [selectedBrand, setSelectedBrand] = useState('');
   const [sortBy, setSortBy] = useState('popularity');
   const [showFilters, setShowFilters] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const { data } = await api.get('/products');
+        setProducts(data);
+      } catch (error) {
+        console.error('Failed to fetch products', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   const filtered = useMemo(() => {
     let result = [...products];
@@ -22,11 +43,11 @@ const Products = () => {
 
     if (sortBy === 'price-asc') result.sort((a, b) => a.price - b.price);
     else if (sortBy === 'price-desc') result.sort((a, b) => b.price - a.price);
-    else if (sortBy === 'name') result.sort((a, b) => a.name.fr.localeCompare(b.name.fr));
-    else result.sort((a, b) => b.reviewCount - a.reviewCount);
+    else if (sortBy === 'name') result.sort((a, b) => (a.name.fr || '').localeCompare(b.name.fr || ''));
+    else result.sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0));
 
     return result;
-  }, [categoryParam, selectedBrand, sortBy]);
+  }, [products, categoryParam, selectedBrand, sortBy]);
 
   const setCategory = (cat: string) => {
     if (cat) searchParams.set('category', cat);
@@ -35,107 +56,185 @@ const Products = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-[#fcfcfc]">
       <Header />
-      <main className="flex-1 py-8 lg:py-12">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="mb-8 flex items-center justify-between">
+      
+      {/* Breadcrumbs & Header */}
+      <div className="bg-white border-b border-border/50 py-6">
+        <div className="container mx-auto px-4 lg:px-12">
+          <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4">
+            <Link to="/" className="hover:text-primary flex items-center gap-1 transition-colors">
+              <Home className="h-3 w-3" />
+              ACCUEIL
+            </Link>
+            <ChevronRight className="h-3 w-3 opacity-20" />
+            <span className="text-foreground">BOUTIQUE</span>
+            {categoryParam && (
+              <>
+                <ChevronRight className="h-3 w-3 opacity-20" />
+                <span className="text-primary italic">{categoryParam.toUpperCase()}</span>
+              </>
+            )}
+          </nav>
+          
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-              <h1 className="font-display text-2xl font-bold text-foreground sm:text-3xl">{t('products.title')}</h1>
-              <p className="mt-1 text-sm text-muted-foreground">{filtered.length} {t('products.results')}</p>
+              <h1 className="text-4xl font-black uppercase tracking-tighter text-foreground leading-none">
+                Notre <span className="text-primary italic">Catalogue</span>
+              </h1>
+              <p className="mt-2 text-xs font-bold uppercase tracking-widest text-muted-foreground/60">
+                {filtered.length} PRODUITS TROUVÉS
+              </p>
             </div>
-            <div className="flex items-center gap-3">
-              <select
-                value={sortBy}
-                onChange={e => setSortBy(e.target.value)}
-                className="rounded-lg border bg-card px-3 py-2 text-sm text-foreground"
-              >
-                <option value="popularity">{t('products.sortPopularity')}</option>
-                <option value="price-asc">{t('products.sortPrice')} ↑</option>
-                <option value="price-desc">{t('products.sortPrice')} ↓</option>
-                <option value="name">{t('products.sortName')}</option>
-              </select>
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center gap-2 rounded-lg border bg-card px-3 py-2 text-sm font-medium text-foreground lg:hidden"
-              >
-                <SlidersHorizontal className="h-4 w-4" />
-                {t('products.filters')}
-              </button>
+            
+            <div className="flex items-center gap-4 border-t md:border-t-0 pt-4 md:pt-0">
+               <div className="flex bg-secondary/50 p-1 rounded-lg">
+                  <button 
+                    onClick={() => setViewMode('grid')}
+                    className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-white shadow-sm text-primary' : 'text-muted-foreground'}`}
+                  >
+                    <LayoutGrid className="h-4 w-4" />
+                  </button>
+                  <button 
+                    onClick={() => setViewMode('list')}
+                    className={`p-2 rounded-md transition-all ${viewMode === 'list' ? 'bg-white shadow-sm text-primary' : 'text-muted-foreground'}`}
+                  >
+                    <List className="h-4 w-4" />
+                  </button>
+               </div>
+               <select
+                  value={sortBy}
+                  onChange={e => setSortBy(e.target.value)}
+                  className="bg-white border-border rounded-lg text-xs font-bold uppercase tracking-widest px-4 py-2.5 focus:ring-primary focus:border-primary"
+                >
+                  <option value="popularity">POPULARITÉ</option>
+                  <option value="price-asc">PRIX CROISSANT</option>
+                  <option value="price-desc">PRIX DÉCROISSANT</option>
+                  <option value="name">NOM A-Z</option>
+                </select>
+                <button
+                  onClick={() => setShowFilters(true)}
+                  className="lg:hidden flex items-center gap-2 bg-primary text-white px-4 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest"
+                >
+                  <SlidersHorizontal className="h-4 w-4" />
+                  FILTRES
+                </button>
             </div>
           </div>
+        </div>
+      </div>
 
-          <div className="flex gap-8">
-            {/* Sidebar Filters */}
-            <aside className={`${showFilters ? 'fixed inset-0 z-50 bg-card p-6 overflow-auto' : 'hidden'} lg:block lg:relative lg:w-56 lg:shrink-0 lg:p-0`}>
-              <div className="flex items-center justify-between lg:hidden mb-4">
-                <h3 className="font-display text-lg font-bold">{t('products.filters')}</h3>
-                <button onClick={() => setShowFilters(false)}><X className="h-5 w-5" /></button>
-              </div>
+      <main className="flex-1 py-12">
+        <div className="container mx-auto px-4 lg:px-12 flex gap-10">
+          
+          {/* Sidebar Filters */}
+          <aside className={`fixed inset-y-0 left-0 z-[60] w-80 bg-white p-8 overflow-y-auto transition-transform duration-300 lg:relative lg:translate-x-0 lg:p-0 lg:w-64 lg:bg-transparent lg:z-0 lg:block ${showFilters ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'}`}>
+            <div className="flex items-center justify-between mb-8 lg:hidden">
+              <h2 className="text-xl font-black uppercase tracking-tighter">FILTRES</h2>
+              <button onClick={() => setShowFilters(false)} className="p-2 bg-secondary rounded-full"><X className="h-5 w-5" /></button>
+            </div>
 
-              {/* Category filter */}
-              <div className="mb-6">
-                <h4 className="mb-3 font-display text-sm font-semibold text-foreground">{t('products.category')}</h4>
-                <div className="flex flex-col gap-1">
+            <div className="space-y-10">
+              {/* Category */}
+              <div className="bg-white lg:rounded-2xl lg:p-6 lg:border lg:border-border/50 lg:shadow-sm">
+                <h3 className="text-xs font-black uppercase tracking-widest text-foreground mb-6 flex items-center gap-2">
+                   <div className="h-1 w-4 bg-primary rounded-full" />
+                   CATÉGORIES
+                </h3>
+                <div className="flex flex-col gap-2">
                   <button
                     onClick={() => setCategory('')}
-                    className={`rounded-md px-3 py-1.5 text-start text-sm transition-colors ${!categoryParam ? 'bg-primary text-primary-foreground' : 'text-foreground/70 hover:bg-secondary'}`}
+                    className={`text-start text-xs font-bold uppercase tracking-widest px-3 py-2.5 rounded-lg transition-all ${!categoryParam ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:bg-secondary'}`}
                   >
-                    {t('products.all')}
+                    TOUT LE CATALOGUE
                   </button>
                   {categories.map(cat => (
                     <button
                       key={cat.id}
-                      onClick={() => { setCategory(cat.id); setShowFilters(false); }}
-                      className={`rounded-md px-3 py-1.5 text-start text-sm transition-colors ${categoryParam === cat.id ? 'bg-primary text-primary-foreground' : 'text-foreground/70 hover:bg-secondary'}`}
+                      onClick={() => setCategory(cat.id)}
+                      className={`text-start text-xs font-bold uppercase tracking-widest px-3 py-2.5 rounded-lg transition-all ${categoryParam === cat.id ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:bg-secondary'}`}
                     >
-                      {cat.icon} {t(`categories.${cat.id}`)}
+                      {cat.label || cat.id.toUpperCase()}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Brand filter */}
-              <div>
-                <h4 className="mb-3 font-display text-sm font-semibold text-foreground">{t('products.brand')}</h4>
-                <div className="flex flex-col gap-1">
+              {/* Brands */}
+              <div className="bg-white lg:rounded-2xl lg:p-6 lg:border lg:border-border/50 lg:shadow-sm">
+                <h3 className="text-xs font-black uppercase tracking-widest text-foreground mb-6 flex items-center gap-2">
+                   <div className="h-1 w-4 bg-primary rounded-full" />
+                   MARQUES
+                </h3>
+                <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => setSelectedBrand('')}
-                    className={`rounded-md px-3 py-1.5 text-start text-sm transition-colors ${!selectedBrand ? 'bg-primary text-primary-foreground' : 'text-foreground/70 hover:bg-secondary'}`}
+                    className={`text-center text-[10px] font-black uppercase tracking-widest py-2 rounded-lg border transition-all ${!selectedBrand ? 'border-primary bg-primary/5 text-primary' : 'border-border text-muted-foreground hover:border-primary/30'}`}
                   >
-                    {t('products.all')}
+                    TOUS
                   </button>
                   {brands.map(brand => (
                     <button
                       key={brand}
-                      onClick={() => { setSelectedBrand(brand); setShowFilters(false); }}
-                      className={`rounded-md px-3 py-1.5 text-start text-sm transition-colors ${selectedBrand === brand ? 'bg-primary text-primary-foreground' : 'text-foreground/70 hover:bg-secondary'}`}
+                      onClick={() => setSelectedBrand(brand)}
+                      className={`text-center text-[10px] font-black uppercase tracking-widest py-2 rounded-lg border transition-all ${selectedBrand === brand ? 'border-primary bg-primary/5 text-primary' : 'border-border text-muted-foreground hover:border-primary/30'}`}
                     >
                       {brand}
                     </button>
                   ))}
                 </div>
               </div>
-            </aside>
+            </div>
+          </aside>
 
-            {/* Products Grid */}
-            <div className="flex-1">
-              {filtered.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-20">
-                  <p className="text-lg text-muted-foreground">{t('products.noResults')}</p>
-                </div>
+          {/* Products List */}
+          <div className="flex-1">
+            <AnimatePresence mode="wait">
+              {loading ? (
+                <motion.div 
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  className="flex flex-col items-center justify-center py-24"
+                >
+                  <RefreshCw className="h-12 w-12 animate-spin text-primary opacity-20 mb-4" />
+                  <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/40">Chargement des produits...</p>
+                </motion.div>
+              ) : filtered.length === 0 ? (
+                <motion.div 
+                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                   className="flex flex-col items-center justify-center py-24"
+                >
+                  <div className="h-20 w-20 rounded-full bg-secondary flex items-center justify-center mb-6">
+                     <SlidersHorizontal className="h-8 w-8 text-muted-foreground/30" />
+                  </div>
+                  <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Aucun résultat trouvé pour vos filtres</p>
+                  <button 
+                    onClick={() => { setCategory(''); setSelectedBrand(''); }}
+                    className="mt-6 text-xs font-black text-primary underline underline-offset-4 uppercase tracking-widest"
+                  >
+                    RÉINITIALISER LES FILTRES
+                  </button>
+                </motion.div>
               ) : (
-                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                <motion.div 
+                  layout
+                  className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}
+                >
                   {filtered.map((product, i) => (
                     <ProductCard key={product.id} product={product} index={i} />
                   ))}
-                </div>
+                </motion.div>
               )}
-            </div>
+            </AnimatePresence>
           </div>
         </div>
       </main>
+
       <Footer />
+      
+      {/* Mobile Filter Overlay */}
+      {showFilters && (
+        <div className="fixed inset-0 z-[55] bg-black/60 backdrop-blur-sm lg:hidden" onClick={() => setShowFilters(false)} />
+      )}
     </div>
   );
 };

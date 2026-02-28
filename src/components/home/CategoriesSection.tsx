@@ -1,90 +1,91 @@
-import { useLanguage } from '@/contexts/LanguageContext';
 import { Link } from 'react-router-dom';
-import { categories } from '@/data/products';
-import { useRef, useEffect, useState, useCallback } from 'react';
+import { motion } from 'framer-motion';
+import { ChevronRight } from 'lucide-react';
+
+const mainCategories = [
+  {
+    id: 'laptops',
+    title: 'PC Portables',
+    subtitle: 'High Performance Laptops',
+    image: '/images/banners/hero.png',
+    link: '/products?category=laptops',
+    span: 'col-span-1 lg:col-span-2 row-span-1 lg:row-span-2'
+  },
+  {
+    id: 'screens',
+    title: 'Ecrans & Moniteurs',
+    subtitle: 'UltraWide Displays',
+    image: '/images/banners/monitors.png',
+    link: '/products?category=screens',
+    span: 'col-span-1 row-span-1'
+  },
+  {
+    id: 'peripherals',
+    title: 'Périphériques PC',
+    subtitle: 'Gaming Gear',
+    image: '/images/banners/peripherals.png',
+    link: '/products?category=peripherals',
+    span: 'col-span-1 row-span-1'
+  },
+  {
+    id: 'printers',
+    title: 'Imprimantes',
+    subtitle: 'Pro Office Solutions',
+    image: '/images/banners/printers.png',
+    link: '/products?category=printers',
+    span: 'col-span-1 lg:col-span-2 row-span-1'
+  },
+];
 
 const CategoriesSection = () => {
-  const { t } = useLanguage();
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [isPaused, setIsPaused] = useState(false);
-  const animationRef = useRef<number>();
-  const positionRef = useRef(0);
-  const speedRef = useRef(typeof window !== 'undefined' && window.innerWidth < 768 ? 0.8 : 0.5);
-
-  useEffect(() => {
-    const onResize = () => {
-      speedRef.current = window.innerWidth < 768 ? 0.8 : 0.5;
-    };
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
-
-  // Triple the items for seamless looping
-  const items = [...categories, ...categories, ...categories];
-
-  const animate = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    // Width of one set of categories
-    const singleSetWidth = el.scrollWidth / 3;
-
-    positionRef.current += speedRef.current;
-
-    // Reset seamlessly when one full set has scrolled
-    if (positionRef.current >= singleSetWidth) {
-      positionRef.current -= singleSetWidth;
-    }
-
-    el.style.transform = `translateX(-${positionRef.current}px)`;
-    animationRef.current = requestAnimationFrame(animate);
-  }, []);
-
-  useEffect(() => {
-    if (!isPaused) {
-      animationRef.current = requestAnimationFrame(animate);
-    }
-    return () => {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
-    };
-  }, [isPaused, animate]);
-
   return (
-    <section className="py-16 lg:py-24">
-      <div className="container mx-auto px-4 lg:px-8">
-        <div className="mb-12 text-center">
-          <h2 className="font-display text-3xl font-bold text-foreground sm:text-4xl">
-            {t('categories.title')}
-          </h2>
-          <p className="mt-3 text-muted-foreground">{t('categories.subtitle')}</p>
+    <section className="py-16 lg:py-24 bg-background">
+      <div className="container mx-auto px-4 lg:px-12">
+        <div className="flex items-end justify-between mb-12">
+          <div>
+            <h2 className="text-3xl font-black uppercase tracking-tighter text-foreground leading-[0.8] mb-4">
+              Explorez nos <span className="text-primary italic">Catégories</span>
+            </h2>
+            <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">LE MEILLEUR DE LA TECHNOLOGIE AU MAROC</p>
+          </div>
+          <Link to="/products" className="hidden lg:flex items-center gap-2 text-xs font-black uppercase tracking-widest text-primary hover:gap-4 transition-all group">
+            TOUT LE CATALOGUE
+            <ChevronRight className="h-4 w-4 bg-primary text-white rounded-full p-0.5 group-hover:scale-125 transition-transform" />
+          </Link>
         </div>
-      </div>
 
-      <div
-        className="relative overflow-hidden"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-      >
-        {/* Fade edges */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-background to-transparent sm:w-24" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-background to-transparent sm:w-24" />
-
-        <div
-          ref={scrollRef}
-          className="flex w-max gap-3 will-change-transform"
-          style={{ transition: isPaused ? 'transform 0.3s ease-out' : 'none' }}
-        >
-          {items.map((cat, i) => (
-            <Link
-              key={`${cat.id}-${i}`}
-              to={`/products?category=${cat.id}`}
-              className="group flex w-28 flex-shrink-0 flex-col items-center gap-2.5 rounded-xl border bg-card p-4 shadow-soft transition-all hover:shadow-hover hover:border-primary/20 hover:-translate-y-0.5 sm:w-32"
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 grid-rows-none lg:grid-rows-2 gap-4 lg:gap-6">
+          {mainCategories.map((cat, idx) => (
+            <motion.div
+              key={cat.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.1, duration: 0.5 }}
+              className={`group relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 ${cat.span}`}
             >
-              <span className="text-2xl">{cat.icon}</span>
-              <span className="text-center text-xs font-medium text-foreground/80 group-hover:text-primary transition-colors line-clamp-1">
-                {t(`categories.${cat.id}`)}
-              </span>
-            </Link>
+              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-all duration-500 z-10" />
+              <img
+                src={cat.image}
+                alt={cat.title}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 z-20 p-8 flex flex-col justify-end">
+                <span className="text-[10px] font-black uppercase tracking-widest text-primary mb-2 opacity-0 -translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                  {cat.subtitle}
+                </span>
+                <h3 className="text-2xl font-black text-white uppercase tracking-tighter translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                  {cat.title}
+                </h3>
+                <Link
+                  to={cat.link}
+                  className="mt-6 inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white border-b-2 border-primary w-fit pb-1 opacity-0 group-hover:opacity-100 transition-all delay-100 duration-300"
+                >
+                  DECOUVRIR LA GAMME
+                  <ChevronRight className="h-3 w-3" />
+                </Link>
+              </div>
+            </motion.div>
           ))}
         </div>
       </div>

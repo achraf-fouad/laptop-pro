@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
-import { ShoppingCart, Menu, X, ChevronRight } from 'lucide-react';
+import { ShoppingCart, Menu, X, ChevronRight, Search, User, Heart, Phone, Mail, MapPin } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -11,19 +11,28 @@ const Header = () => {
   const { totalItems } = useCart();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const categories = [
+    { id: 'laptops', label: t('nav.laptops'), to: '/products?category=laptops' },
+    { id: 'screens', label: 'Ecrans', to: '/products?category=screens' },
+    { id: 'peripherals', label: 'Périphériques', to: '/products?category=peripherals' },
+    { id: 'gaming', label: 'Gaming', to: '/products?category=gaming' },
+    { id: 'printers', label: 'Imprimantes', to: '/products?category=printers' },
+  ];
+
   const navLinks = [
     { to: '/', label: t('nav.home') },
     { to: '/products', label: t('nav.products') },
-    { to: '/products?category=laptops', label: t('nav.laptops') },
-    { to: '/products?category=screens', label: t('nav.parts') },
+    { to: '/about', label: t('nav.about') },
+    { to: '/contact', label: t('nav.contact') },
   ];
 
   const isActive = (to: string) => {
@@ -32,115 +41,187 @@ const Header = () => {
   };
 
   return (
-    <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-card/95 backdrop-blur-xl border-b border-border shadow-soft'
-          : 'bg-card/80 backdrop-blur-md border-b border-transparent'
-      }`}
-    >
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 lg:px-8">
-        {/* Logo */}
-        <Link to="/" className="group flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-hero transition-transform duration-200 group-hover:scale-105">
-            <span className="text-lg font-bold text-primary-foreground">B</span>
+    <div className="flex flex-col">
+      {/* Top Bar */}
+      <div className="bg-primary px-4 py-2 text-primary-foreground text-xs hidden lg:block">
+        <div className="container mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer">
+              <Phone className="h-3.5 w-3.5" />
+              <span>+212 6 69 97 34 83</span>
+            </div>
+            <a href="mailto:contact@computeraccess.ma" className="flex items-center gap-2 hover:text-white transition-colors">
+              <Mail className="h-3 w-3" />
+              <span>contact@computeraccess.ma</span>
+            </a>
           </div>
-          <div className="flex flex-col">
-            <span className="font-display text-lg font-bold leading-tight text-foreground">
-              bh-tech
-            </span>
-            <span className="hidden text-[10px] font-medium uppercase tracking-widest text-muted-foreground sm:block">
-              Premium Tech
-            </span>
+          <div className="flex items-center gap-4">
+            <Link to="/about" className="hover:text-white transition-colors">{t('nav.about')}</Link>
+            <Link to="/contact" className="hover:text-white transition-colors">{t('nav.contact')}</Link>
+            <div className="h-3 w-px bg-white/20 mx-1" />
+            <LanguageSwitcher />
           </div>
-        </Link>
-
-        {/* Desktop Nav */}
-        <nav className="hidden items-center gap-0.5 md:flex">
-          {navLinks.map(link => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className={`relative rounded-lg px-3.5 py-2 text-sm font-medium transition-colors duration-200 ${
-                isActive(link.to)
-                  ? 'text-primary'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60'
-              }`}
-            >
-              {link.label}
-              {isActive(link.to) && (
-                <motion.span
-                  layoutId="nav-indicator"
-                  className="absolute inset-x-2 -bottom-[1px] h-0.5 rounded-full bg-primary"
-                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                />
-              )}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Actions */}
-        <div className="flex items-center gap-1.5">
-          <LanguageSwitcher />
-
-          <div className="mx-1 hidden h-5 w-px bg-border md:block" />
-
-          <Link
-            to="/cart"
-            className="relative flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary/60"
-          >
-            <ShoppingCart className="h-[18px] w-[18px]" />
-            {totalItems > 0 && (
-              <motion.span
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="absolute -end-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground"
-              >
-                {totalItems}
-              </motion.span>
-            )}
-          </Link>
-
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="rounded-lg p-2 text-muted-foreground hover:bg-secondary/60 hover:text-foreground md:hidden"
-          >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
         </div>
       </div>
 
-      {/* Mobile Nav */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: 'easeInOut' }}
-            className="overflow-hidden border-t border-border bg-card md:hidden"
-          >
-            <nav className="flex flex-col gap-0.5 p-3">
-              {navLinks.map(link => (
+      <header
+        className={`z-50 transition-all duration-300 ${
+          scrolled
+            ? 'sticky top-0 bg-card shadow-md border-b'
+            : 'bg-card'
+        }`}
+      >
+        {/* Main Header */}
+        <div className="border-b border-border">
+          <div className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-8 gap-8">
+            {/* Logo */}
+            <Link to="/" className="group flex items-center gap-2.5 shrink-0">
+              <div className="flex h-12 w-12 items-center justify-center bg-primary rounded-xl shadow-lg shadow-primary/20">
+                <span className="text-2xl font-black italic text-white flex items-center justify-center">CA</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-2xl font-black uppercase tracking-tighter">
+                  Computer <span className="text-primary italic">Access</span>
+                </span>
+                <span className="hidden text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground sm:block">
+                  High-End Solutions
+                </span>
+              </div>
+            </Link>
+
+            {/* Search Bar */}
+            <div className="hidden flex-1 max-w-2xl lg:flex items-center relative">
+              <div className={`flex flex-1 items-center rounded-full bg-secondary/80 border transition-all duration-200 px-4 py-1 ${isSearchFocused ? 'border-primary ring-4 ring-primary/10' : 'border-transparent'}`}>
+                <Search className="h-4 w-4 text-muted-foreground mr-3" />
+                <input 
+                  type="text"
+                  placeholder="Rechercher un produit, une marque..."
+                  onFocus={() => setIsSearchFocused(true)}
+                  onBlur={() => setIsSearchFocused(false)}
+                  className="flex-1 bg-transparent border-none focus:ring-0 text-sm h-10 placeholder:text-muted-foreground/60"
+                />
+                <button className="bg-primary text-white text-xs font-bold px-5 py-2 rounded-full hover:bg-primary/90 transition-colors ml-2">
+                  CHERCHER
+                </button>
+              </div>
+            </div>
+
+            {/* Icons */}
+            <div className="flex items-center gap-2 lg:gap-4">
+              <Link to="/login" className="flex flex-col items-center gap-0.5 group px-2">
+                <div className="rounded-full p-2.5 bg-secondary/80 group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                  <User className="h-5 w-5" />
+                </div>
+                <span className="text-[10px] font-bold text-muted-foreground group-hover:text-primary transition-colors uppercase">Compte</span>
+              </Link>
+              
+              <Link to="/wishlist" className="hidden sm:flex flex-col items-center gap-0.5 group px-2">
+                <div className="rounded-full p-2.5 bg-secondary/80 group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                  <Heart className="h-5 w-5" />
+                </div>
+                <span className="text-[10px] font-bold text-muted-foreground group-hover:text-primary transition-colors uppercase">Favoris</span>
+              </Link>
+
+              <Link to="/cart" className="flex flex-col items-center gap-0.5 group px-2 relative text-foreground">
+                <div className="rounded-full p-2.5 bg-secondary/80 group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                  <ShoppingCart className="h-5 w-5" />
+                  {totalItems > 0 && (
+                    <span className="absolute -top-1 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[10px] font-black text-accent-foreground border-2 border-card">
+                      {totalItems}
+                    </span>
+                  )}
+                </div>
+                <span className="text-[10px] font-bold text-muted-foreground group-hover:text-primary transition-colors uppercase">Panier</span>
+              </Link>
+
+              <button
+                onClick={() => setMobileOpen(!mobileOpen)}
+                className="rounded-full bg-secondary/80 p-2.5 text-foreground lg:hidden hover:bg-primary hover:text-white transition-all"
+              >
+                {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Categories Nav */}
+        <div className="hidden lg:block border-b border-border py-3 bg-card shadow-sm">
+          <div className="container mx-auto px-8">
+            <nav className="flex items-center gap-10">
+              <Link to="/products" className="flex items-center gap-2 group">
+                <Menu className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
+                <span className="text-sm font-bold uppercase tracking-wide group-hover:text-primary transition-colors">TOUT LE CATALOGUE</span>
+              </Link>
+              
+              {categories.map(cat => (
                 <Link
-                  key={link.to}
-                  to={link.to}
-                  onClick={() => setMobileOpen(false)}
-                  className={`flex items-center justify-between rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
-                    isActive(link.to)
-                      ? 'bg-primary/5 text-primary'
-                      : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
-                  }`}
+                  key={cat.id}
+                  to={cat.to}
+                  className="text-xs font-bold uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors pb-1 border-b-2 border-transparent hover:border-primary"
                 >
-                  <span>{link.label}</span>
-                  <ChevronRight className="h-4 w-4 opacity-40" />
+                  {cat.label}
                 </Link>
               ))}
+              
+              <div className="ml-auto">
+                <Link 
+                  to="/promotions" 
+                  className="flex items-center gap-2 text-xs font-black text-destructive uppercase tracking-widest animate-pulse"
+                >
+                  <span className="flex h-2 w-2 rounded-full bg-destructive" />
+                  PROMOTIONS FLASH
+                </Link>
+              </div>
             </nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </header>
+          </div>
+        </div>
+
+        {/* Mobile Nav */}
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25, ease: 'easeInOut' }}
+              className="overflow-hidden border-t border-border bg-card md:hidden"
+            >
+              <nav className="flex flex-col gap-0.5 p-3">
+                {navLinks.map(link => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    onClick={() => setMobileOpen(false)}
+                    className={`flex items-center justify-between rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
+                      isActive(link.to)
+                        ? 'bg-primary/5 text-primary'
+                        : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+                    }`}
+                  >
+                    <span>{link.label}</span>
+                    <ChevronRight className="h-4 w-4 opacity-40" />
+                  </Link>
+                ))}
+                
+                <div className="h-px bg-border my-2 mx-4" />
+                
+                {categories.map(cat => (
+                  <Link
+                    key={cat.id}
+                    to={cat.to}
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center justify-between rounded-lg px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
+                  >
+                    <span>{cat.label}</span>
+                    <ChevronRight className="h-4 w-4 opacity-40" />
+                  </Link>
+                ))}
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </header>
+    </div>
   );
 };
 

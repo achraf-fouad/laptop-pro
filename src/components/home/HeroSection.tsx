@@ -85,12 +85,6 @@ const HeroSection = () => {
                 {slides[current].cta}
                 <ArrowRight className="h-4 w-4" />
               </Link>
-              <button className="flex items-center gap-2 group">
-                <div className="h-12 w-12 rounded-full border-2 border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
-                  <Play className="h-4 w-4 fill-current" />
-                </div>
-                <span className="text-xs font-bold uppercase tracking-widest">Vidéo</span>
-              </button>
             </div>
           </motion.div>
         </div>

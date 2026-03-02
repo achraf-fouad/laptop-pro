@@ -74,7 +74,6 @@ const AdminLayout = () => {
             </div>
             <div className="flex flex-col overflow-hidden">
                <span className="text-xs font-black uppercase tracking-widest truncate">Administrateur</span>
-               <span className="text-[9px] font-bold text-white/30 uppercase truncate">ID: #889274</span>
             </div>
          </div>
       </div>
@@ -102,13 +101,6 @@ const AdminLayout = () => {
           );
         })}
         
-        <div className="my-4 h-px bg-white/5 mx-4" />
-        <p className="px-4 text-[9px] font-black uppercase tracking-[0.3em] text-white/20 mb-2">Paramètres</p>
-        
-        <Link to="#" className="flex items-center gap-4 rounded-xl px-4 py-3.5 text-xs font-black uppercase tracking-[0.1em] text-white/40 hover:bg-white/5 hover:text-white transition-all group">
-           <Settings className="h-5 w-5 text-white/20 group-hover:text-primary" />
-           <span>Configuration</span>
-        </Link>
       </nav>
 
       {/* Footer Actions */}
@@ -173,14 +165,6 @@ const AdminLayout = () => {
             >
               <Menu className="h-5 w-5" />
             </button>
-            <div className="hidden lg:flex items-center gap-3 bg-secondary/50 rounded-full px-5 py-2.5 border border-border/30 w-96">
-               <Search className="h-4 w-4 text-muted-foreground" />
-               <input 
-                 type="text" 
-                 placeholder="RECHERCHER DANS L'ADMIN..." 
-                 className="bg-transparent border-none text-[10px] font-black uppercase tracking-widest focus:ring-0 placeholder:text-muted-foreground/40 w-full"
-               />
-            </div>
             <h1 className="md:hidden font-black uppercase tracking-tighter text-xl italic">
               Dashboard
             </h1>
@@ -188,7 +172,9 @@ const AdminLayout = () => {
           
           <div className="flex items-center gap-4">
             <button className="relative p-3 bg-secondary/50 rounded-full text-muted-foreground hover:bg-primary hover:text-white transition-all group">
-               <Bell className="h-5 w-5 transition-transform group-hover:rotate-12" />
+               <Link to="/admin/orders">
+                  <Bell className="h-5 w-5 transition-transform group-hover:rotate-12" />
+               </Link>
                <span className="absolute top-2 right-2 h-2.5 w-2.5 bg-destructive rounded-full border-2 border-white" />
             </button>
             <div className="h-8 w-px bg-border mx-2" />

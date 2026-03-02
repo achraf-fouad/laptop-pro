@@ -188,7 +188,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Top Categories or other info */}
-        <div className="rounded-3xl border border-border/40 bg-[#0a0a0a] p-8 shadow-sm flex flex-col">
+        {/*<div className="rounded-3xl border border-border/40 bg-[#0a0a0a] p-8 shadow-sm flex flex-col">
             <div className="mb-10">
               <h3 className="text-xl font-black uppercase tracking-tighter text-white italic">Objectifs <span className="text-primary text-2xl">•</span></h3>
               <p className="text-[10px] font-black uppercase tracking-widest text-white/30 mt-1">SUIVI DES VENTES MENSUELLES</p>
@@ -223,7 +223,7 @@ const AdminDashboard = () => {
                    <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </button>
             </div>
-        </div>
+        </div>*/}
       </div>
 
       {/* Recent orders */}

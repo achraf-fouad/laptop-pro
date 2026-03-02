@@ -57,7 +57,9 @@ const Header = () => {
           </div>
           <div className="flex items-center gap-4">
             <Link to="/about" className="hover:text-white transition-colors">{t('nav.about')}</Link>
-            <Link to="/contact" className="hover:text-white transition-colors">{t('nav.contact')}</Link>            
+            <Link to="/contact" className="hover:text-white transition-colors">{t('nav.contact')}</Link>
+            <div className="h-3 w-px bg-white/20 mx-1" />
+            <LanguageSwitcher />
           </div>
         </div>
       </div>
@@ -106,10 +108,20 @@ const Header = () => {
 
             {/* Icons */}
             <div className="flex items-center gap-2 lg:gap-4">
+              <Link to="/login" className="flex flex-col items-center gap-0.5 group px-2">
+                <div className="rounded-full p-2.5 bg-secondary/80 group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                  <User className="h-5 w-5" />
+                </div>
+                <span className="text-[10px] font-bold text-muted-foreground group-hover:text-primary transition-colors uppercase">Compte</span>
+              </Link>
               
-              
-              
-            
+              <Link to="/wishlist" className="hidden sm:flex flex-col items-center gap-0.5 group px-2">
+                <div className="rounded-full p-2.5 bg-secondary/80 group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                  <Heart className="h-5 w-5" />
+                </div>
+                <span className="text-[10px] font-bold text-muted-foreground group-hover:text-primary transition-colors uppercase">Favoris</span>
+              </Link>
+
               <Link to="/cart" className="flex flex-col items-center gap-0.5 group px-2 relative text-foreground">
                 <div className="rounded-full p-2.5 bg-secondary/80 group-hover:bg-primary group-hover:text-white transition-all duration-300">
                   <ShoppingCart className="h-5 w-5" />
@@ -121,7 +133,6 @@ const Header = () => {
                 </div>
                 <span className="text-[10px] font-bold text-muted-foreground group-hover:text-primary transition-colors uppercase">Panier</span>
               </Link>
-              <LanguageSwitcher />
 
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}

@@ -65,9 +65,10 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
         {/* Quick Actions Hover */}
         <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2 z-10 pointer-events-none group-hover:pointer-events-auto">
           <button className="h-10 w-10 bg-white rounded-full flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all shadow-lg translate-y-4 group-hover:translate-y-0 duration-300">
-          <Link to={`/product/${product.id}`} >
             <Eye className="h-4 w-4" />
-          </Link>
+          </button>
+          <button className="h-10 w-10 bg-white rounded-full flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all shadow-lg translate-y-4 group-hover:translate-y-0 duration-300 delay-75">
+            <Heart className="h-4 w-4" />
           </button>
         </div>
       </div>

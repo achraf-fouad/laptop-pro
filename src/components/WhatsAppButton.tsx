@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { MessageCircle, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { FaWhatsapp } from "react-icons/fa6";
 
-const WHATSAPP_NUMBER = '212695143551'; // Replace with your actual number
+const WHATSAPP_NUMBER = '212695143551';
 
 const WhatsAppButton = () => {
   const [showTooltip, setShowTooltip] = useState(false);
@@ -48,7 +49,7 @@ const WhatsAppButton = () => {
         {/* Pulse ring */}
         <span className="absolute inset-0 animate-ping rounded-full bg-[#25D366]/30" style={{ animationDuration: '2.5s' }} />
 
-        <MessageCircle className="h-6 w-6 fill-white stroke-white" />
+        <FaWhatsapp className="h-8 w-8 fill-white stroke-white" />
       </a>
     </div>
   );

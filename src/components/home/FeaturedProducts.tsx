@@ -1,6 +1,6 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Link } from 'react-router-dom';
-import { ArrowRight, RefreshCw, ChevronRight } from 'lucide-react';
+import { RefreshCw, ChevronRight } from 'lucide-react';
 import ProductCard from '@/components/products/ProductCard';
 import { useState, useEffect } from 'react';
 import api from '@/lib/api';
@@ -38,10 +38,10 @@ const FeaturedProducts = () => {
   const filtered = getFilteredProducts();
 
   const tabs = [
-    { id: 'new', label: 'Nouveautés' },
-    { id: 'popular', label: 'Top Ventes' },
-    { id: 'sale', label: 'Promotions' },
-  ] as const;
+    { id: 'new' as const, label: t('featured.new') },
+    { id: 'popular' as const, label: t('featured.popular') },
+    { id: 'sale' as const, label: t('featured.sale') },
+  ];
 
   return (
     <section className="bg-secondary/30 py-16 lg:py-24">
@@ -49,9 +49,9 @@ const FeaturedProducts = () => {
         <div className="flex flex-col lg:flex-row items-baseline justify-between gap-6 mb-12">
           <div>
             <h2 className="text-3xl font-black uppercase tracking-tighter text-foreground leading-[0.8] mb-4">
-              Nouveautés & <span className="text-primary italic">Promos</span>
+              {t('featured.title')} <span className="text-primary italic">{t('featured.titleHighlight')}</span>
             </h2>
-            <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">LES MEILLEURES OFFRES DU MOMENT</p>
+            <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">{t('featured.subtitle')}</p>
           </div>
           
           <div className="flex bg-card p-1 rounded-full border border-border/50 shadow-sm overflow-hidden">
@@ -69,13 +69,10 @@ const FeaturedProducts = () => {
 
         {loading ? (
           <div className="flex h-64 items-center justify-center">
-             <RefreshCw className="h-10 w-10 animate-spin text-primary opacity-20" />
+            <RefreshCw className="h-10 w-10 animate-spin text-primary opacity-20" />
           </div>
         ) : (
-          <motion.div 
-            layout
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-          >
+          <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <AnimatePresence mode="popLayout">
               {filtered.map((product, i) => (
                 <ProductCard key={`${activeTab}-${product.id}`} product={product} index={i} />
@@ -89,7 +86,7 @@ const FeaturedProducts = () => {
             to="/products"
             className="group flex items-center gap-4 bg-foreground text-background px-10 py-5 rounded-full text-xs font-black uppercase tracking-[0.2em] hover:bg-primary transition-all shadow-xl hover:-translate-y-1"
           >
-            VOIR TOUT LE CATALOGUE
+            {t('featured.viewAll')}
             <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-2" />
           </Link>
         </div>

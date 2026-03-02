@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
-import { ShoppingCart, Menu, X, ChevronRight, Search, User, Heart, Phone, Mail, MapPin } from 'lucide-react';
+import { ShoppingCart, Menu, X, ChevronRight, Search, Phone, Mail } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -22,10 +22,10 @@ const Header = () => {
 
   const categories = [
     { id: 'laptops', label: t('nav.laptops'), to: '/products?category=laptops' },
-    { id: 'screens', label: 'Ecrans', to: '/products?category=screens' },
-    { id: 'peripherals', label: 'Périphériques', to: '/products?category=peripherals' },
-    { id: 'gaming', label: 'Gaming', to: '/products?category=gaming' },
-    { id: 'printers', label: 'Imprimantes', to: '/products?category=printers' },
+    { id: 'screens', label: t('nav.screens'), to: '/products?category=screens' },
+    { id: 'peripherals', label: t('nav.peripherals'), to: '/products?category=peripherals' },
+    { id: 'gaming', label: t('nav.gaming'), to: '/products?category=gaming' },
+    { id: 'printers', label: t('nav.printers'), to: '/products?category=printers' },
   ];
 
   const navLinks = [
@@ -64,15 +64,12 @@ const Header = () => {
 
       <header
         className={`z-50 transition-all duration-300 ${
-          scrolled
-            ? 'sticky top-0 bg-card shadow-md border-b'
-            : 'bg-card'
+          scrolled ? 'sticky top-0 bg-card shadow-md border-b' : 'bg-card'
         }`}
       >
         {/* Main Header */}
         <div className="border-b border-border">
           <div className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-8 gap-8">
-            {/* Logo */}
             <Link to="/" className="group flex items-center gap-2.5 shrink-0">
               <div className="flex h-12 w-12 items-center justify-center bg-primary rounded-xl shadow-lg shadow-primary/20">
                 <span className="text-2xl font-black italic text-white flex items-center justify-center">CA</span>
@@ -87,29 +84,23 @@ const Header = () => {
               </div>
             </Link>
 
-            {/* Search Bar */}
             <div className="hidden flex-1 max-w-2xl lg:flex items-center relative">
               <div className={`flex flex-1 items-center rounded-full bg-secondary/80 border transition-all duration-200 px-4 py-1 ${isSearchFocused ? 'border-primary ring-4 ring-primary/10' : 'border-transparent'}`}>
                 <Search className="h-4 w-4 text-muted-foreground mr-3" />
                 <input 
                   type="text"
-                  placeholder="Rechercher un produit, une marque..."
+                  placeholder={t('nav.search')}
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
                   className="flex-1 bg-transparent border-none focus:ring-0 text-sm h-10 placeholder:text-muted-foreground/60"
                 />
                 <button className="bg-primary text-white text-xs font-bold px-5 py-2 rounded-full hover:bg-primary/90 transition-colors ml-2">
-                  CHERCHER
+                  {t('nav.searchBtn')}
                 </button>
               </div>
             </div>
 
-            {/* Icons */}
             <div className="flex items-center gap-2 lg:gap-4">
-              
-              
-              
-            
               <Link to="/cart" className="flex flex-col items-center gap-0.5 group px-2 relative text-foreground">
                 <div className="rounded-full p-2.5 bg-secondary/80 group-hover:bg-primary group-hover:text-white transition-all duration-300">
                   <ShoppingCart className="h-5 w-5" />
@@ -119,10 +110,9 @@ const Header = () => {
                     </span>
                   )}
                 </div>
-                <span className="text-[10px] font-bold text-muted-foreground group-hover:text-primary transition-colors uppercase">Panier</span>
+                <span className="text-[10px] font-bold text-muted-foreground group-hover:text-primary transition-colors uppercase">{t('nav.cart')}</span>
               </Link>
               <LanguageSwitcher />
-
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
                 className="rounded-full bg-secondary/80 p-2.5 text-foreground lg:hidden hover:bg-primary hover:text-white transition-all"
@@ -139,9 +129,8 @@ const Header = () => {
             <nav className="flex items-center gap-10">
               <Link to="/products" className="flex items-center gap-2 group">
                 <Menu className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
-                <span className="text-sm font-bold uppercase tracking-wide group-hover:text-primary transition-colors">TOUT LE CATALOGUE</span>
+                <span className="text-sm font-bold uppercase tracking-wide group-hover:text-primary transition-colors">{t('nav.allCatalog')}</span>
               </Link>
-              
               {categories.map(cat => (
                 <Link
                   key={cat.id}
@@ -151,14 +140,13 @@ const Header = () => {
                   {cat.label}
                 </Link>
               ))}
-              
               <div className="ml-auto">
                 <Link 
                   to="/promotions" 
                   className="flex items-center gap-2 text-xs font-black text-destructive uppercase tracking-widest animate-pulse"
                 >
                   <span className="flex h-2 w-2 rounded-full bg-destructive" />
-                  PROMOTIONS FLASH
+                  {t('nav.flashSales')}
                 </Link>
               </div>
             </nav>
@@ -191,9 +179,7 @@ const Header = () => {
                     <ChevronRight className="h-4 w-4 opacity-40" />
                   </Link>
                 ))}
-                
                 <div className="h-px bg-border my-2 mx-4" />
-                
                 {categories.map(cat => (
                   <Link
                     key={cat.id}

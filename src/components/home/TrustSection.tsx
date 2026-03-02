@@ -1,32 +1,15 @@
-import { Shield, Truck, Headphones, Award, CreditCard, RotateCcw } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { Shield, Truck, Headphones, CreditCard } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const TrustSection = () => {
+  const { t } = useLanguage();
+
   const items = [
-    { 
-        icon: Truck, 
-        title: 'LIVRAISON PARTOUT', 
-        desc: 'AU MAROC SOUS 24/48H',
-        color: 'text-primary'
-    },
-    { 
-        icon: Shield, 
-        title: 'GARANTIE OFFICIELLE', 
-        desc: 'TOUS NOS PRODUITS SONT GARANTIS',
-        color: 'text-accent'
-    },
-    { 
-        icon: CreditCard, 
-        title: 'PAIEMENT SECURISÉ', 
-        desc: 'CASH ON DELIVERY & CMI',
-        color: 'text-success'
-    },
-    { 
-        icon: Headphones, 
-        title: 'SUPPORT TECH 7J/7', 
-        desc: 'UNE EQUIPE A VOTRE ECOUTE',
-        color: 'text-primary'
-    },
+    { icon: Truck, title: t('trust.shipping'), desc: t('trust.shippingDesc'), color: 'text-primary' },
+    { icon: Shield, title: t('trust.warranty'), desc: t('trust.warrantyDesc'), color: 'text-accent' },
+    { icon: CreditCard, title: t('trust.payment'), desc: t('trust.paymentDesc'), color: 'text-success' },
+    { icon: Headphones, title: t('trust.support'), desc: t('trust.supportDesc'), color: 'text-primary' },
   ];
 
   return (

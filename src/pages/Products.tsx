@@ -7,20 +7,8 @@ import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/products/ProductCard';
 import { SlidersHorizontal, X, RefreshCw, ChevronRight, Home, LayoutGrid, List } from 'lucide-react';
 import api from '@/lib/api';
-import { Product } from '@/types/product';
+import { Product, Category } from '@/types/product';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const categoryTranslationMap: Record<string, string> = {
-  laptops: 'categories.laptops',
-  screens: 'categories.screens',
-  batteries: 'categories.batteries',
-  keyboards: 'categories.keyboards',
-  chargers: 'categories.chargers',
-  ssd: 'categories.ssd',
-  ram: 'categories.ram',
-  cooling: 'categories.cooling',
-  accessories: 'categories.accessories',
-};
 
 const Products = () => {
   const { t, language } = useLanguage();
@@ -30,34 +18,67 @@ const Products = () => {
   const [sortBy, setSortBy] = useState('popularity');
   const [showFilters, setShowFilters] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       setLoading(true);
       try {
-        const { data } = await api.get('/products');
-        setProducts(data);
+        const [productsRes, categoriesRes] = await Promise.all([
+          api.get('/products'),
+          api.get('/categories')
+        ]);
+        setProducts(productsRes.data);
+        setCategories(categoriesRes.data);
       } catch (error) {
-        console.error('Failed to fetch products', error);
+        console.error('Failed to fetch data', error);
       } finally {
         setLoading(false);
       }
     };
-    fetchProducts();
+    fetchData();
   }, []);
 
   const filtered = useMemo(() => {
     let result = [...products];
-    if (categoryParam) result = result.filter(p => p.category === categoryParam);
+    if (categoryParam) {
+      // Find the selected category and all its children's IDs
+      const getCategoryIds = (slugOrId: string, cats: Category[]): number[] => {
+        const findCat = (list: Category[]): Category | undefined => {
+          for (const c of list) {
+            if (c.slug === slugOrId || c.id.toString() === slugOrId) return c;
+            if (c.children) {
+              const found = findCat(c.children);
+              if (found) return found;
+            }
+          }
+        };
+        const target = findCat(cats);
+        if (!target) return [];
+
+        const ids: number[] = [target.id];
+        const collectIds = (children: Category[]) => {
+          children.forEach(child => {
+            ids.push(child.id);
+            if (child.children) collectIds(child.children);
+          });
+        };
+        if (target.children) collectIds(target.children);
+        return ids;
+      };
+
+      const allowedIds = getCategoryIds(categoryParam, categories);
+      result = result.filter(p => p.category_id && allowedIds.includes(p.category_id));
+    }
     if (selectedBrand) result = result.filter(p => p.brand === selectedBrand);
     if (sortBy === 'price-asc') result.sort((a, b) => a.price - b.price);
     else if (sortBy === 'price-desc') result.sort((a, b) => b.price - a.price);
-    else if (sortBy === 'name') result.sort((a, b) => (a.name.fr || '').localeCompare(b.name.fr || ''));
+    else if (sortBy === 'name') result.sort((a, b) => (a.name[language] || '').localeCompare(b.name[language] || ''));
     else result.sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0));
     return result;
-  }, [products, categoryParam, selectedBrand, sortBy]);
+  }, [products, categoryParam, categories, selectedBrand, sortBy, language]);
 
   const setCategory = (cat: string) => {
     if (cat) searchParams.set('category', cat);
@@ -65,10 +86,25 @@ const Products = () => {
     setSearchParams(searchParams);
   };
 
+  const currentCategoryName = useMemo(() => {
+    if (!categoryParam) return '';
+    const findCategory = (cats: Category[]): Category | undefined => {
+      for (const cat of cats) {
+        if (cat.slug === categoryParam || cat.id.toString() === categoryParam) return cat;
+        if (cat.children) {
+          const found = findCategory(cat.children);
+          if (found) return found;
+        }
+      }
+    };
+    const cat = findCategory(categories);
+    return cat?.name[language] || categoryParam.toUpperCase();
+  }, [categoryParam, categories, language]);
+
   return (
     <div className="flex min-h-screen flex-col bg-[#fcfcfc]">
       <Header />
-      
+
       <div className="bg-white border-b border-border/50 py-6">
         <div className="container mx-auto px-4 lg:px-12">
           <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4">
@@ -81,11 +117,11 @@ const Products = () => {
             {categoryParam && (
               <>
                 <ChevronRight className="h-3 w-3 opacity-20" />
-                <span className="text-primary italic">{t(categoryTranslationMap[categoryParam] || '') || categoryParam.toUpperCase()}</span>
+                <span className="text-primary italic">{currentCategoryName}</span>
               </>
             )}
           </nav>
-          
+
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
               <h1 className="text-4xl font-black uppercase tracking-tighter text-foreground leading-none">
@@ -95,7 +131,7 @@ const Products = () => {
                 {filtered.length} {t('products.found')}
               </p>
             </div>
-            
+
             <div className="flex items-center gap-4 border-t md:border-t-0 pt-4 md:pt-0">
               <div className="flex bg-secondary/50 p-1 rounded-lg">
                 <button onClick={() => setViewMode('grid')} className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-white shadow-sm text-primary' : 'text-muted-foreground'}`}>
@@ -144,18 +180,32 @@ const Products = () => {
                 <div className="flex flex-col gap-2">
                   <button
                     onClick={() => setCategory('')}
-                    className={`text-start text-xs font-bold uppercase tracking-widest px-3 py-2.5 rounded-lg transition-all ${!categoryParam ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:bg-secondary'}`}
+                    className={`text-start text-[10px] font-black uppercase tracking-widest px-3 py-2.5 rounded-lg transition-all ${!categoryParam ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:bg-secondary'}`}
                   >
                     {t('products.allCatalog')}
                   </button>
-                  {catData.map(cat => (
-                    <button
-                      key={cat.id}
-                      onClick={() => setCategory(cat.id)}
-                      className={`text-start text-xs font-bold uppercase tracking-widest px-3 py-2.5 rounded-lg transition-all ${categoryParam === cat.id ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:bg-secondary'}`}
-                    >
-                      {t(categoryTranslationMap[cat.id] || '') || cat.id.toUpperCase()}
-                    </button>
+                  {categories.map(cat => (
+                    <div key={cat.id} className="flex flex-col gap-1">
+                      <button
+                        onClick={() => setCategory(cat.slug)}
+                        className={`text-start text-[10px] font-black uppercase tracking-widest px-3 py-2.5 rounded-lg transition-all ${categoryParam === cat.slug ? 'bg-primary text-white shadow-md' : 'text-muted-foreground hover:bg-secondary'}`}
+                      >
+                        {cat.name[language]}
+                      </button>
+                      {cat.children && cat.children.length > 0 && (
+                        <div className="ml-4 pl-2 border-l border-border/50 flex flex-col gap-1 mt-1 mb-2">
+                          {cat.children.map(child => (
+                            <button
+                              key={child.id}
+                              onClick={() => setCategory(child.slug)}
+                              className={`text-start text-[9px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-md transition-all ${categoryParam === child.slug ? 'bg-primary/10 text-primary border border-primary/20' : 'text-muted-foreground/70 hover:text-primary'}`}
+                            >
+                              {child.name[language]}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>
@@ -199,7 +249,7 @@ const Products = () => {
                     <SlidersHorizontal className="h-8 w-8 text-muted-foreground/30" />
                   </div>
                   <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">{t('products.noResults')}</p>
-                  <button 
+                  <button
                     onClick={() => { setCategory(''); setSelectedBrand(''); }}
                     className="mt-6 text-xs font-black text-primary underline underline-offset-4 uppercase tracking-widest"
                   >

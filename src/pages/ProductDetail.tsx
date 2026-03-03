@@ -20,8 +20,6 @@ interface Review {
 }
 
 interface Product extends BaseProduct {
-  image_2?: string;
-  image_3?: string;
   reviews?: Review[];
 }
 
@@ -44,7 +42,7 @@ const ProductDetail = () => {
     try {
       const [prodRes, allRes] = await Promise.all([api.get(`/products/${id}`), api.get('/products')]);
       setProduct(prodRes.data);
-      setActiveImage(prodRes.data.image);
+      setActiveImage(prodRes.data.images?.[0] || '');
       setActiveTab('desc');
       setAllProducts(allRes.data);
     } catch (error) {
@@ -93,7 +91,7 @@ const ProductDetail = () => {
   }
 
   const formatPrice = (price: number) => new Intl.NumberFormat('fr-MA').format(price);
-  const related = allProducts.filter(p => p.category === product.category && String(p.id) !== String(product.id)).slice(0, 4);
+  const related = allProducts.filter(p => p.category_id === product.category_id && String(p.id) !== String(product.id)).slice(0, 4);
 
   const handleAdd = () => {
     addToCart(product);
@@ -103,7 +101,7 @@ const ProductDetail = () => {
 
   const name = product.name[language] || product.name.fr || product.name.en || '';
   const description = product.description[language] || product.description.fr || product.description.en || '';
-  const galleryImages = [product.image, product.image_2, product.image_3].filter(Boolean) as string[];
+  const galleryImages = product.images || [];
 
   return (
     <div className="flex min-h-screen flex-col bg-[#fcfcfc]">
@@ -150,9 +148,9 @@ const ProductDetail = () => {
                     <span className="text-[10px] font-black text-muted-foreground ml-2 hover:text-primary transition-colors hover:underline">({product.reviewCount || 0} {t('product.reviewsLabel')})</span>
                   </div>
                   <div className="h-4 w-px bg-border" />
-                  <span className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1 ${product.stock === 'out_of_stock' ? 'text-destructive' : 'text-primary'}`}>
-                    {product.stock === 'out_of_stock' ? <XCircle className="h-3 w-3" /> : <Check className="h-3 w-3" />}
-                    {product.stock === 'out_of_stock' ? t('product.outOfStock') : t('product.inStock')}
+                  <span className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1 ${product.stock_status === 'out_of_stock' ? 'text-destructive' : 'text-primary'}`}>
+                    {product.stock_status === 'out_of_stock' ? <XCircle className="h-3 w-3" /> : <Check className="h-3 w-3" />}
+                    {product.stock_status === 'out_of_stock' ? t('product.outOfStock') : t('product.inStock')}
                   </span>
                 </div>
               </div>
@@ -163,16 +161,18 @@ const ProductDetail = () => {
                     <span className="text-xl text-muted-foreground line-through font-bold">{formatPrice(product.originalPrice)} {currency}</span>
                   )}
                   <span className="text-5xl font-black text-primary italic tracking-tighter">{formatPrice(product.price)} <span className="text-xl font-bold not-italic">{currency}</span></span>
+                  {/* Added category display here, assuming this was the intended placement */}
+                  <span className="text-primary italic">{product.category?.name[language] || product.category_id}</span>
                 </div>
                 <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{t('product.taxIncluded')}</p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
-                <button onClick={handleAdd} disabled={product.stock === 'out_of_stock'} className="flex items-center justify-center gap-4 bg-primary text-white p-5 rounded-full text-xs font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.03] transition-all disabled:opacity-50">
+                <button onClick={handleAdd} disabled={product.stock_status === 'out_of_stock'} className="flex items-center justify-center gap-4 bg-primary text-white p-5 rounded-full text-xs font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.03] transition-all disabled:opacity-50">
                   {added ? <Check className="h-5 w-5" /> : <ShoppingCart className="h-5 w-5" />}
                   {added ? t('product.addedToCart') : t('product.addToCart')}
                 </button>
-                <button className="flex items-center justify-center gap-4 border-2 border-foreground text-foreground p-5 rounded-full text-xs font-black uppercase tracking-widest hover:bg-foreground hover:text-white transition-all disabled:opacity-50" disabled={product.stock === 'out_of_stock'}>
+                <button className="flex items-center justify-center gap-4 border-2 border-foreground text-foreground p-5 rounded-full text-xs font-black uppercase tracking-widest hover:bg-foreground hover:text-white transition-all disabled:opacity-50" disabled={product.stock_status === 'out_of_stock'}>
                   {t('product.quickBuy')}
                 </button>
               </div>
@@ -181,15 +181,15 @@ const ProductDetail = () => {
               <div className="grid grid-cols-3 gap-4 border-y border-border/50 py-6 mb-10">
                 <div className="flex flex-col items-center text-center gap-2">
                   <Truck className="h-5 w-5 text-primary" />
-                  <span className="text-[9px] font-black uppercase tracking-widest leading-none">{t('product.delivery')} <br/> {t('product.delivery48h')}</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest leading-none">{t('product.delivery')} <br /> {t('product.delivery48h')}</span>
                 </div>
                 <div className="flex flex-col items-center text-center gap-2">
                   <Shield className="h-5 w-5 text-primary" />
-                  <span className="text-[9px] font-black uppercase tracking-widest leading-none">{t('product.warrantyLabel')} <br/> {t('product.warranty1y')}</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest leading-none">{t('product.warrantyLabel')} <br /> {t('product.warranty1y')}</span>
                 </div>
                 <div className="flex flex-col items-center text-center gap-2">
                   <RotateCcw className="h-5 w-5 text-primary" />
-                  <span className="text-[9px] font-black uppercase tracking-widest leading-none">{t('product.pickup')} <br/> {t('product.pickupStore')}</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest leading-none">{t('product.pickup')} <br /> {t('product.pickupStore')}</span>
                 </div>
               </div>
 
@@ -212,7 +212,7 @@ const ProductDetail = () => {
                     {description || t('product.noDescription')}
                   </p>
                 )}
-                
+
                 {activeTab === 'specs' && (
                   <div className="divide-y border border-border/50 rounded-xl overflow-hidden bg-white">
                     {product.specs && Object.keys(product.specs).length > 0 ? Object.entries(product.specs).map(([key, value]) => (

@@ -10,7 +10,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        return Product::latest()->get();
+        return Product::with('category')->latest()->get();
     }
 
     public function store(Request $request)
@@ -19,50 +19,79 @@ class ProductController extends Controller
             'name' => 'required|array',
             'description' => 'required|array',
             'price' => 'required|numeric',
-            'category' => 'required|string',
-            'stock_status' => 'required|string',
+            'original_price' => 'nullable|numeric',
+            'category_id' => 'required|integer|exists:categories,id',
+            'brand' => 'required|string',
+            'stock' => 'required|integer',
+            'stock_status' => 'required|string|in:in_stock,low_stock,out_of_stock',
+            'images' => 'required|array|max:10',
+            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048', // 2MB max
+            'specs' => 'nullable|array',
+            'compatibility' => 'nullable|array',
+            'featured' => 'nullable|boolean',
         ]);
 
-        $data = $request->except(['image', 'image_2', 'image_3']);
-        
-        $imageFields = ['image', 'image_2', 'image_3'];
-        foreach ($imageFields as $field) {
-            if ($request->hasFile($field)) {
-                $path = $request->file($field)->store('products', 'public');
-                $data[$field] = url('storage/' . $path);
-            } elseif ($request->$field && is_string($request->$field)) {
-                $data[$field] = $request->$field;
+        $imagePaths = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $filename = uniqid() . '_' . time() . '.' . $image->getClientOriginalExtension();
+                $path = $image->storeAs('products', $filename, 'public');
+                $imagePaths[] = url('storage/' . $path);
             }
         }
 
-        return Product::create($data);
+        $validated['images'] = $imagePaths;
+
+        $product = Product::create($validated);
+
+        return response()->json($product, 201);
     }
 
     public function show($id)
     {
-        return Product::with(['reviews' => function ($query) {
-            $query->where('status', 'approved')->latest();
-        }])->findOrFail($id);
+        return Product::with([
+            'category',
+            'reviews' => function ($query) {
+                $query->where('status', 'approved')->latest();
+            }
+        ])->findOrFail($id);
     }
 
     public function update(Request $request, Product $product)
     {
-        $data = $request->except(['image', 'image_2', 'image_3']);
-        
-        $imageFields = ['image', 'image_2', 'image_3'];
-        foreach ($imageFields as $field) {
-            if ($request->hasFile($field)) {
-                $path = $request->file($field)->store('products', 'public');
-                $data[$field] = url('storage/' . $path);
-            } elseif ($request->$field && is_string($request->$field)) {
-                $data[$field] = $request->$field;
-            } elseif ($request->has($field) && empty($request->$field)) {
-                $data[$field] = null; // Handle deletion of image
+        $validated = $request->validate([
+            'name' => 'nullable|array',
+            'description' => 'nullable|array',
+            'price' => 'nullable|numeric',
+            'original_price' => 'nullable|numeric',
+            'category_id' => 'nullable|integer|exists:categories,id',
+            'brand' => 'nullable|string',
+            'stock' => 'nullable|integer',
+            'stock_status' => 'nullable|string|in:in_stock,low_stock,out_of_stock',
+            'images' => 'nullable|array|max:10',
+            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+            'existing_images' => 'nullable|array',
+            'specs' => 'nullable|array',
+            'compatibility' => 'nullable|array',
+            'featured' => 'nullable|boolean',
+        ]);
+
+        $imagePaths = $request->input('existing_images', []);
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                if (count($imagePaths) >= 10)
+                    break;
+                $filename = uniqid() . '_' . time() . '.' . $image->getClientOriginalExtension();
+                $path = $image->storeAs('products', $filename, 'public');
+                $imagePaths[] = url('storage/' . $path);
             }
         }
 
-        $product->update($data);
-        return clone $product;
+        $validated['images'] = $imagePaths;
+
+        $product->update($validated);
+        return $product->load('category');
     }
 
     public function destroy(Product $product)

@@ -15,14 +15,14 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
   const { addToCart } = useCart();
 
   const stockLabel =
-    product.stock === 'in_stock' ? t('featured.inStock') :
-    product.stock === 'low_stock' ? t('featured.lowStock') :
-    t('featured.outOfStock');
+    product.stock_status === 'in_stock' ? t('featured.inStock') :
+      product.stock_status === 'low_stock' ? t('featured.lowStock') :
+        t('featured.outOfStock');
 
   const stockColor =
-    product.stock === 'in_stock' ? 'text-success' :
-    product.stock === 'low_stock' ? 'text-warning' :
-    'text-destructive';
+    product.stock_status === 'in_stock' ? 'text-success' :
+      product.stock_status === 'low_stock' ? 'text-warning' :
+        'text-destructive';
 
   const formatPrice = (price: number) => new Intl.NumberFormat('fr-MA').format(price);
   const name = product.name[language] || product.name.fr || product.name.en || '';
@@ -50,7 +50,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
 
       <div className="relative aspect-square overflow-hidden bg-[#fcfcfc] flex items-center justify-center p-6">
         <Link to={`/product/${product.id}`} className="w-full h-full">
-          <img src={product.image} alt={name} className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+          <img src={product.images && product.images.length > 0 ? product.images[0] : ''} alt={name} className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-110" loading="lazy" />
         </Link>
         <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2 z-10 pointer-events-none group-hover:pointer-events-auto">
           <button className="h-10 w-10 bg-white rounded-full flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all shadow-lg translate-y-4 group-hover:translate-y-0 duration-300">
@@ -61,7 +61,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
 
       <div className="flex flex-1 flex-col p-4 pt-2 border-t border-border/30">
         <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
-          {product.category || t('product.informatique')}
+          {product.category?.name[language] || t('product.informatique')}
         </p>
         <Link to={`/product/${product.id}`} className="flex-1">
           <h3 className="text-sm font-bold text-foreground leading-tight line-clamp-2 hover:text-primary transition-colors min-h-[2.5rem] mb-2 uppercase">
@@ -87,7 +87,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
           </div>
           <button
             onClick={() => addToCart(product)}
-            disabled={product.stock === 'out_of_stock'}
+            disabled={product.stock_status === 'out_of_stock'}
             className="flex w-full items-center justify-center gap-2 rounded-full bg-secondary py-2.5 text-[10px] font-black uppercase tracking-widest text-foreground transition-all hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed group/btn"
           >
             <ShoppingCart className="h-3.5 w-3.5 transition-transform group-hover/btn:-rotate-12" />

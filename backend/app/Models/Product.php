@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Product extends Model
 {
@@ -15,18 +16,25 @@ class Product extends Model
         'description',
         'price',
         'original_price',
-        'category',
+        'images', // JSON array of image paths
+        'category_id',
         'brand',
-        'image',
-        'image_2',
-        'image_3',
-        'stock_status',
+        'stock', // Integer
+        'stock_status', // Enum
         'rating',
         'review_count',
         'specs',
         'compatibility',
         'featured',
     ];
+
+    /**
+     * Get the category that owns the product.
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
 
     public function reviews()
     {
@@ -36,20 +44,17 @@ class Product extends Model
     protected $casts = [
         'name' => 'array',
         'description' => 'array',
+        'images' => 'array',
         'specs' => 'array',
         'compatibility' => 'array',
         'featured' => 'boolean',
         'price' => 'float',
         'original_price' => 'float',
         'rating' => 'float',
+        'stock' => 'integer',
     ];
 
-    protected $appends = ['stock', 'reviewCount', 'originalPrice'];
-
-    public function getStockAttribute()
-    {
-        return $this->attributes['stock_status'] ?? 'in_stock';
-    }
+    protected $appends = ['reviewCount', 'originalPrice'];
 
     public function getReviewCountAttribute()
     {

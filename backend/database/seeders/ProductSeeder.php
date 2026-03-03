@@ -165,11 +165,117 @@ class ProductSeeder extends Seeder
                 'rating' => 4.2,
                 'review_count' => 88,
                 'featured' => false,
+            ],
+            [
+                'name' => ['fr' => 'Chaise Gaming RGB Pro', 'en' => 'Pro RGB Gaming Chair', 'ar' => 'كرسي ألعاب RGB برو'],
+                'description' => [
+                    'fr' => 'Confort ultime avec éclairage RGB intégré et support lombaire.',
+                    'en' => 'Ultimate comfort with integrated RGB lighting and lumbar support.',
+                    'ar' => 'راحة فائقة مع إضاءة RGB مدمجة ودعم أسفل الظهر.'
+                ],
+                'price' => 25000,
+                'category' => 'chairs',
+                'brand' => 'Generic',
+                'image' => 'https://images.unsplash.com/photo-1598550476439-6847785fce6e?w=600&h=400&fit=crop',
+                'stock_status' => 'in_stock',
+                'rating' => 4.8,
+                'review_count' => 45,
+                'featured' => true,
+            ],
+            [
+                'name' => ['fr' => 'Canon EOS R5 Mirrorless', 'en' => 'Canon EOS R5 Mirrorless', 'ar' => 'كانون EOS R5 بدون مرآة'],
+                'description' => [
+                    'fr' => 'Appareil photo plein format 45MP avec vidéo 8K.',
+                    'en' => '45MP full-frame camera with 8K video.',
+                    'ar' => 'كاميرا إطار كامل بدقة 45 ميجابكسل مع فيديو 8K.'
+                ],
+                'price' => 38000,
+                'category' => 'camera',
+                'brand' => 'Canon',
+                'image' => 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=600&h=400&fit=crop',
+                'stock_status' => 'in_stock',
+                'rating' => 4.9,
+                'review_count' => 12,
+                'featured' => true,
+            ],
+            [
+                'name' => ['fr' => 'IMPRIMANTE HP LASERJET PRO', 'en' => 'HP LASERJET PRO PRINTER', 'ar' => 'طابعة HP ليزر جيت برو'],
+                'description' => [
+                    'fr' => 'Imprimante laser monochrome rapide et fiable pour le bureau.',
+                    'en' => 'Fast and reliable monochrome laser printer for the office.',
+                    'ar' => 'طابعة ليزر أحادية اللون سريعة وموثوقة للمكتب.'
+                ],
+                'price' => 32000,
+                'category' => 'printers',
+                'brand' => 'HP',
+                'image' => 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=600&h=400&fit=crop',
+                'stock_status' => 'in_stock',
+                'rating' => 4.5,
+                'review_count' => 67,
+                'featured' => false,
+            ],
+            [
+                'name' => ['fr' => 'PlayStation 5 Console', 'en' => 'PlayStation 5 Console', 'ar' => 'جهاز بلايستيشن 5'],
+                'description' => [
+                    'fr' => 'La nouvelle génération de jeux avec des graphismes incroyables.',
+                    'en' => 'Next generation gaming with incredible graphics.',
+                    'ar' => 'الجيل التالي من الألعاب مع رسومات مذهلة.'
+                ],
+                'price' => 65000,
+                'category' => 'consoles',
+                'brand' => 'Sony',
+                'image' => 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=600&h=400&fit=crop',
+                'stock_status' => 'in_stock',
+                'rating' => 5.0,
+                'review_count' => 450,
+                'featured' => true,
             ]
         ];
 
         foreach ($products as $productData) {
+            // Map 'image' to 'images' array
+            if (isset($productData['image'])) {
+                $productData['images'] = [$productData['image']];
+                unset($productData['image']);
+            }
+
+            // Add default stock if missing
+            if (!isset($productData['stock'])) {
+                $productData['stock'] = 10;
+            }
+
+            // Find category by old string name mapping
+            $categorySlug = $this->mapOldCategoryToNew($productData['category']);
+            $category = \App\Models\Category::where('slug', $categorySlug)->first();
+
+            if ($category) {
+                $productData['category_id'] = $category->id;
+            }
+
+            unset($productData['category']); // Remove old category string
+
             Product::create($productData);
         }
+    }
+
+    private function mapOldCategoryToNew(string $oldCategory): string
+    {
+        $map = [
+            'laptops' => 'laptops-portables',
+            'screens' => 'screens-monitors',
+            'batteries' => 'spare-parts-batteries',
+            'ram' => 'spare-parts-ram',
+            'ssd' => 'storage-ssd',
+            'accessories' => 'pc-peripherals-mice',
+            'chargers' => 'spare-parts-chargers',
+            'keyboards' => 'pc-peripherals-keyboards',
+            'cooling' => 'pc-components-fans-cooling-air-water',
+            'chairs' => 'chairs',
+            'camera' => 'camera-universe',
+            'printers' => 'printers-scanners',
+            'consoles' => 'consoles-gaming',
+        ];
+
+        return $map[$oldCategory] ?? $oldCategory;
     }
 }

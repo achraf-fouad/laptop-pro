@@ -10,33 +10,33 @@ const CategoriesSection = () => {
     {
       id: 'laptops',
       title: t('categories.laptops'),
-      subtitle: t('categories.laptopsSub'),
-      image: '/images/banners/hero.png',
-      link: '/products?category=laptops',
+      subtitle: 'Premium Hardware',
+      image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&q=80',
+      link: '/products?category=laptops-portables',
       span: 'col-span-1 lg:col-span-2 row-span-1 lg:row-span-2'
     },
     {
       id: 'screens',
-      title: t('categories.screens'),
-      subtitle: t('categories.screensSub'),
-      image: '/images/banners/monitors.png',
-      link: '/products?category=screens',
+      title: t('categories.monitors'),
+      subtitle: 'UltraWide View',
+      image: 'https://images.unsplash.com/photo-1585792180666-f7347c490ee2?w=800&q=80',
+      link: '/products?category=screens-monitors',
       span: 'col-span-1 row-span-1'
     },
     {
       id: 'peripherals',
       title: t('categories.peripherals'),
-      subtitle: t('categories.peripheralsSub'),
-      image: '/images/banners/peripherals.png',
-      link: '/products?category=peripherals',
+      subtitle: 'Gaming Gear',
+      image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=800&q=80',
+      link: '/products?category=pc-peripherals',
       span: 'col-span-1 row-span-1'
     },
     {
-      id: 'printers',
-      title: t('categories.printers'),
-      subtitle: t('categories.printersSub'),
-      image: '/images/banners/printers.png',
-      link: '/products?category=printers',
+      id: 'gaming',
+      title: t('categories.gaming'),
+      subtitle: 'Pro Gaming',
+      image: 'https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=800&q=80',
+      link: '/products?category=consoles-gaming',
       span: 'col-span-1 lg:col-span-2 row-span-1'
     },
   ];

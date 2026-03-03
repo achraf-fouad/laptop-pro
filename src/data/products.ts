@@ -11,7 +11,7 @@ export const products: Product[] = [
     },
     price: 145000,
     originalPrice: 165000,
-    category: 'laptops',
+    category_id: 1, // Laptops & Computers
     brand: 'HP',
     image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600&h=400&fit=crop',
     stock: 'in_stock',
@@ -30,7 +30,7 @@ export const products: Product[] = [
       ar: 'الرفيق المثالي للمهنيين أثناء التنقل. خفيف الوزن وقوي وآمن.'
     },
     price: 198000,
-    category: 'laptops',
+    category_id: 1, // Laptops & Computers
     brand: 'Lenovo',
     image: 'https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=600&h=400&fit=crop',
     stock: 'in_stock',
@@ -49,7 +49,7 @@ export const products: Product[] = [
     },
     price: 12500,
     originalPrice: 15000,
-    category: 'screens',
+    category_id: 17, // Screens (Spare Parts)
     brand: 'Generic',
     image: 'https://images.unsplash.com/photo-1585792180666-f7347c490ee2?w=600&h=400&fit=crop',
     stock: 'in_stock',
@@ -67,7 +67,7 @@ export const products: Product[] = [
       ar: 'بطارية عالية السعة متوافقة مع مجموعة واسعة من الحواسيب المحمولة.'
     },
     price: 8500,
-    category: 'batteries',
+    category_id: 15, // Batteries (Spare Parts)
     brand: 'Generic',
     image: 'https://images.unsplash.com/photo-1619953942547-233eab5a70d6?w=600&h=400&fit=crop',
     stock: 'low_stock',
@@ -86,7 +86,7 @@ export const products: Product[] = [
     },
     price: 18500,
     originalPrice: 22000,
-    category: 'ssd',
+    category_id: 10, // Storage
     brand: 'Samsung',
     image: 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=600&h=400&fit=crop',
     stock: 'in_stock',
@@ -104,7 +104,7 @@ export const products: Product[] = [
       ar: 'طقم ذاكرة DDR4 عالي الأداء لترقية حاسوبك المحمول.'
     },
     price: 7200,
-    category: 'ram',
+    category_id: 8, // RAM
     brand: 'Kingston',
     image: 'https://images.unsplash.com/photo-1562976540-1502c2145186?w=600&h=400&fit=crop',
     stock: 'in_stock',
@@ -121,7 +121,7 @@ export const products: Product[] = [
       ar: 'شاحن USB-C عالمي متوافق مع معظم الحواسيب المحمولة الحديثة.'
     },
     price: 4500,
-    category: 'chargers',
+    category_id: 18, // Chargers
     brand: 'Generic',
     image: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=600&h=400&fit=crop',
     stock: 'in_stock',
@@ -138,7 +138,7 @@ export const products: Product[] = [
       ar: 'لوحة مفاتيح بديلة لـ HP ProBook و EliteBook.'
     },
     price: 5800,
-    category: 'keyboards',
+    category_id: 12, // Keyboards
     brand: 'HP',
     image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=600&h=400&fit=crop',
     stock: 'in_stock',
@@ -155,7 +155,7 @@ export const products: Product[] = [
       ar: 'مروحة بديلة لـ Dell Latitude و Inspiron. هادئة وفعالة.'
     },
     price: 3200,
-    category: 'cooling',
+    category_id: 5, // PC Components
     brand: 'Dell',
     image: 'https://images.unsplash.com/photo-1555617981-dac3880eac6e?w=600&h=400&fit=crop',
     stock: 'in_stock',
@@ -172,7 +172,7 @@ export const products: Product[] = [
       ar: 'حامل ألمنيوم قابل للتعديل للحاسوب المحمول.'
     },
     price: 3500,
-    category: 'accessories',
+    category_id: 11, // Peripherals
     brand: 'Generic',
     image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=600&h=400&fit=crop',
     stock: 'in_stock',
@@ -182,15 +182,18 @@ export const products: Product[] = [
 ];
 
 export const categories = [
-  { id: 'laptops', icon: '💻' },
-  { id: 'screens', icon: '🖥️' },
-  { id: 'batteries', icon: '🔋' },
-  { id: 'keyboards', icon: '⌨️' },
-  { id: 'chargers', icon: '🔌' },
-  { id: 'ssd', icon: '💾' },
-  { id: 'ram', icon: '🧩' },
-  { id: 'cooling', icon: '❄️' },
-  { id: 'accessories', icon: '🎒' },
+  { id: 'laptops-portables', icon: '💻', name: { en: 'Laptops & Portables', fr: 'Ordinateurs Portables & Laptop', ar: 'الحواسيب المحمولة' } },
+  { id: 'pc-components', icon: '⚙️', name: { en: 'PC Components', fr: 'Composants PC', ar: 'مكونات الحاسوب' } },
+  { id: 'spare-parts', icon: '🔧', name: { en: 'Spare Parts', fr: 'Pièces de rechange', ar: 'قطع غيار' } },
+  { id: 'screens-monitors', icon: '🖥️', name: { en: 'Screens & Monitors', fr: 'Écrans & Moniteur pc', ar: 'شاشات وحواسب' } },
+  { id: 'pc-peripherals', icon: '⌨️', name: { en: 'PC PERIPHERALS', fr: 'PÉRIPHÉRIQUE PC', ar: 'ملحقات الحاسوب' } },
+  { id: 'chairs', icon: '💺', name: { en: 'Chairs', fr: 'CHAISES', ar: 'كراسي' } },
+  { id: 'bags-cases', icon: '🎒', name: { en: 'Bags & Cases', fr: 'Cartables', ar: 'حقائب' } },
+  { id: 'storage', icon: '💾', name: { en: 'STORAGE', fr: 'STOCKAGE', ar: 'تخزين' } },
+  { id: 'cables', icon: '🔌', name: { en: 'CABLES', fr: 'CÂBLES', ar: 'كابلات' } },
+  { id: 'printers-scanners', icon: '🖨️', name: { en: 'PRINTERS & SCANNERS', fr: 'IMPRIMANTE & SCANNER', ar: 'طابعات وماسحات' } },
+  { id: 'consoles-gaming', icon: '🎮', name: { en: 'CONSOLES & GAMING', fr: 'CONSOLES & JEUX', ar: 'كنسول وألعاب' } },
+  { id: 'camera-universe', icon: '📷', name: { en: 'CAMERA UNIVERSE', fr: 'UNIVERS CAMÉRA', ar: 'عالم الكاميرات' } },
 ];
 
 export const brands = ['HP', 'Lenovo', 'Dell', 'Samsung', 'Kingston', 'ASUS', 'Acer', 'Generic'];

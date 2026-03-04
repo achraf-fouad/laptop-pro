@@ -7,18 +7,26 @@ use Illuminate\Database\Eloquent\Model;
 class Review extends Model
 {
     protected $fillable = [
+        'user_id',
         'product_id',
         'author',
         'rating',
         'comment',
-        'status',
-        'is_featured'
+        'approved',
+        'is_featured',
+        'reply'
     ];
 
     protected $casts = [
+        'approved' => 'boolean',
         'is_featured' => 'boolean',
         'rating' => 'integer'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function product()
     {

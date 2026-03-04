@@ -19,18 +19,34 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
 
-    Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
-    Route::get('/dashboard/sales-graph', [DashboardController::class, 'salesGraph']);
-    Route::get('/dashboard/customers', [DashboardController::class, 'customers']);
+    // Staff & Admin Access
+    Route::group(['middleware' => 'staff'], function () {
+        Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
+        Route::get('/dashboard/sales-graph', [DashboardController::class, 'salesGraph']);
 
-    Route::get('/orders', [OrderController::class, 'index']);
-    Route::get('/orders/{order}', [OrderController::class, 'show']);
-    Route::post('/orders/{order}/confirm', [OrderController::class, 'confirm']);
-    Route::post('/orders/{order}/decline', [OrderController::class, 'decline']);
+        // Orders Management
+        Route::get('/orders', [OrderController::class, 'index']);
+        Route::get('/orders/{order}', [OrderController::class, 'show']);
+        Route::put('/orders/{order}/status', [OrderController::class, 'updateStatus']);
 
-    Route::get('/reviews/pending', [ReviewController::class, 'pending']);
-    Route::post('/reviews/{review}/approve', [ReviewController::class, 'approve']);
-    Route::post('/reviews/{review}/decline', [ReviewController::class, 'decline']);
-    Route::post('/reviews/{review}/toggle-featured', [ReviewController::class, 'toggleFeatured']);
-    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy']);
+        // Reviews Management
+        Route::get('/reviews', [ReviewController::class, 'index']);
+        Route::get('/reviews/pending', [ReviewController::class, 'pending']);
+        Route::post('/reviews/{review}/approve', [ReviewController::class, 'approve']);
+        Route::post('/reviews/{review}/toggle-featured', [ReviewController::class, 'toggleFeatured']);
+
+        // Clients Management (View Only for Staff)
+        Route::get('/users', [\App\Http\Controllers\Api\UserController::class, 'index']);
+        Route::get('/users/{user}', [\App\Http\Controllers\Api\UserController::class, 'show']);
+    });
+
+    // Admin Only Access
+    Route::group(['middleware' => 'admin'], function () {
+        Route::delete('/orders/{order}', [OrderController::class, 'destroy']);
+        Route::delete('/users/{user}', [\App\Http\Controllers\Api\UserController::class, 'destroy']);
+        Route::delete('/reviews/{review}', [ReviewController::class, 'destroy']);
+
+        // Products Full Management (CRUD)
+        Route::apiResource('admin/products', ProductController::class)->except(['index', 'show']);
+    });
 });

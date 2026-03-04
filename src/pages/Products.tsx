@@ -9,6 +9,7 @@ import { SlidersHorizontal, X, RefreshCw, ChevronRight, Home, LayoutGrid, List }
 import api from '@/lib/api';
 import { Product, Category } from '@/types/product';
 import { motion, AnimatePresence } from 'framer-motion';
+import SEO from '@/components/common/SEO';
 
 const Products = () => {
   const { t, language } = useLanguage();
@@ -30,8 +31,8 @@ const Products = () => {
           api.get('/products'),
           api.get('/categories')
         ]);
-        setProducts(productsRes.data);
-        setCategories(categoriesRes.data);
+        setProducts(productsRes.data.data || productsRes.data);
+        setCategories(categoriesRes.data.data || categoriesRes.data);
       } catch (error) {
         console.error('Failed to fetch data', error);
       } finally {
@@ -103,6 +104,10 @@ const Products = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#fcfcfc]">
+      <SEO
+        title={currentCategoryName ? `${currentCategoryName} | Produits` : "Tous les Produits"}
+        description={`Découvrez notre catalogue de ${filtered.length} ordinateurs portables professionnels. Filtrez par marque et catégorie.`}
+      />
       <Header />
 
       <div className="bg-white border-b border-border/50 py-6">

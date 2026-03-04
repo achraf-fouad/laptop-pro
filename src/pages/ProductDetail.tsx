@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/lib/api';
 import { Product as BaseProduct } from '@/types/product';
 import { toast } from 'sonner';
+import SEO from '@/components/common/SEO';
 
 interface Review {
   id: number;
@@ -41,10 +42,11 @@ const ProductDetail = () => {
     setLoading(true);
     try {
       const [prodRes, allRes] = await Promise.all([api.get(`/products/${id}`), api.get('/products')]);
-      setProduct(prodRes.data);
-      setActiveImage(prodRes.data.images?.[0] || '');
+      const productData = prodRes.data.data || prodRes.data;
+      setProduct(productData);
+      setActiveImage(productData.images?.[0] || '');
       setActiveTab('desc');
-      setAllProducts(allRes.data);
+      setAllProducts(allRes.data.data || allRes.data);
     } catch (error) {
       console.error('Failed to fetch product', error);
     } finally {
@@ -105,6 +107,12 @@ const ProductDetail = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#fcfcfc]">
+      <SEO
+        title={name}
+        description={description.substring(0, 160)}
+        image={activeImage}
+        type="product"
+      />
       <Header />
       <main className="flex-1 py-12">
         <div className="container mx-auto px-4 lg:px-12">

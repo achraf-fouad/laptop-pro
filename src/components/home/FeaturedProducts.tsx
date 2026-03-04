@@ -18,7 +18,7 @@ const FeaturedProducts = () => {
       setLoading(true);
       try {
         const { data } = await api.get('/products');
-        setProducts(data);
+        setProducts(data.data || data);
       } catch (error) {
         console.error('Failed to fetch featured products', error);
       } finally {
@@ -53,7 +53,7 @@ const FeaturedProducts = () => {
             </h2>
             <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">{t('featured.subtitle')}</p>
           </div>
-          
+
           <div className="flex bg-card p-1 rounded-full border border-border/50 shadow-sm overflow-hidden">
             {tabs.map(tab => (
               <button

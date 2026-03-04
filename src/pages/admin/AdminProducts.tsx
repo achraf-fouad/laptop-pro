@@ -16,6 +16,13 @@ interface Category {
   level?: number;
 }
 
+interface ProductImage {
+  id: number;
+  path: string;
+  url: string;
+  sort_order: number;
+}
+
 interface Product {
   id: number;
   name: { fr: string; en: string; ar: string };
@@ -26,6 +33,7 @@ interface Product {
   category?: Category;
   brand: string;
   images: string[];
+  productImages?: ProductImage[];
   stock: number;
   stock_status: string;
 }
@@ -35,6 +43,7 @@ const AdminProducts = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null);
 
@@ -44,25 +53,28 @@ const AdminProducts = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [{ data: productsData }, { data: categoriesData }] = await Promise.all([
+      const [{ data: productsRes }, { data: categoriesRes }] = await Promise.all([
         api.get('/products'),
         api.get('/categories')
       ]);
-      setProducts(productsData);
 
-      // Flatten categories for dropdown
+      setProducts(productsRes.data || productsRes);
+
+      const categoriesData = categoriesRes.data || categoriesRes;
       const flattened: Category[] = [];
       const flatten = (cats: any[], level = 0) => {
-        cats.forEach(cat => {
+        cats.forEach((cat: any) => {
           flattened.push({ ...cat, level });
           if (cat.children && cat.children.length > 0) {
             flatten(cat.children, level + 1);
           }
         });
       };
-      flatten(categoriesData);
+
+      flatten(Array.isArray(categoriesData) ? categoriesData : []);
       setCategories(flattened);
     } catch (error) {
+      console.error('Fetch error:', error);
       toast.error('Erreur lors du chargement des données');
     } finally {
       setLoading(false);
@@ -74,18 +86,15 @@ const AdminProducts = () => {
   }, []);
 
   useEffect(() => {
-    // Generate previews for selected files
     const newPreviews = selectedFiles.map(file => URL.createObjectURL(file));
     setPreviews(newPreviews);
-
-    // Cleanup URLs on unmount or when selectedFiles changes
     return () => newPreviews.forEach(url => URL.revokeObjectURL(url));
   }, [selectedFiles]);
 
   const handleDelete = async (id: number) => {
     if (!confirm('Voulez-vous vraiment supprimer ce produit ?')) return;
     try {
-      await api.delete(`/products/${id}`);
+      await api.delete(`/admin/products/${id}`);
       toast.success('Produit supprimé');
       fetchData();
     } catch (error) {
@@ -109,6 +118,7 @@ const AdminProducts = () => {
   };
 
   const removeExistingImage = (index: number) => {
+    // Note: On normalized backend, removal should ideally happen via a dedicated endpoint or IDs
     if (editingProduct?.images) {
       const newImages = editingProduct.images.filter((_, i) => i !== index);
       setEditingProduct({ ...editingProduct, images: newImages });
@@ -119,10 +129,11 @@ const AdminProducts = () => {
     e.preventDefault();
     if (!editingProduct) return;
 
+    const loadingToast = toast.loading('Enregistrement en cours...');
+
     try {
       const formData = new FormData();
 
-      // Handle name and description (JSON)
       if (editingProduct.name) {
         Object.entries(editingProduct.name).forEach(([lang, val]) => {
           formData.append(`name[${lang}]`, val as string);
@@ -143,37 +154,31 @@ const AdminProducts = () => {
       formData.append('stock_status', editingProduct.stock_status || 'in_stock');
       formData.append('brand', editingProduct.brand || '');
 
-      // Append existing images that were NOT removed
-      if (editingProduct.images) {
-        editingProduct.images.forEach((img, idx) => {
-          formData.append(`existing_images[${idx}]`, img);
-        });
-      }
-
-      // Append new files
+      // New files
       selectedFiles.forEach((file) => {
         formData.append('images[]', file);
       });
 
+      const config = {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      };
+
       if (editingProduct.id) {
         formData.append('_method', 'PUT');
-        await api.post(`/products/${editingProduct.id}`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-        toast.success('Produit mis à jour');
+        await api.post(`/admin/products/${editingProduct.id}`, formData, config);
+        toast.success('Produit mis à jour', { id: loadingToast });
       } else {
-        await api.post('/products', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-        toast.success('Produit créé avec succès');
+        await api.post('/admin/products', formData, config);
+        toast.success('Produit créé avec succès', { id: loadingToast });
       }
+
       setIsDialogOpen(false);
       setSelectedFiles([]);
       fetchData();
     } catch (error: any) {
       console.error(error);
       const message = error.response?.data?.message || 'Erreur lors de l\'enregistrement';
-      toast.error(message);
+      toast.error(message, { id: loadingToast });
     }
   };
 
@@ -183,7 +188,7 @@ const AdminProducts = () => {
       description: { fr: '', en: '', ar: '' },
       price: 0,
       original_price: 0,
-      category_id: categories.length > 0 ? categories[0].id : 0,
+      category_id: categories.length > 0 ? categories[0].id : undefined,
       brand: '',
       images: [],
       stock: 0,
@@ -199,10 +204,12 @@ const AdminProducts = () => {
     setIsDialogOpen(true);
   };
 
-  const filtered = products.filter((p) =>
-    (p.name?.fr || '').toLowerCase().includes(search.toLowerCase()) ||
-    (p.brand || '').toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = Array.isArray(products) ? products.filter((p) => {
+    const matchesSearch = (p.name?.fr || '').toLowerCase().includes(search.toLowerCase()) ||
+      (p.brand || '').toLowerCase().includes(search.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || p.stock_status === statusFilter;
+    return matchesSearch && matchesStatus;
+  }) : [];
 
   return (
     <div className="p-8 space-y-10">
@@ -234,6 +241,18 @@ const AdminProducts = () => {
             className="w-full bg-secondary/30 border-none rounded-xl pl-12 pr-4 py-3.5 text-xs font-black uppercase tracking-widest placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20"
           />
         </div>
+
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="h-12 border-none bg-secondary/50 rounded-xl px-4 text-[10px] font-black uppercase tracking-widest focus:ring-2 focus:ring-primary/20"
+        >
+          <option value="all">Tous les stocks</option>
+          <option value="in_stock">En stock</option>
+          <option value="low_stock">Stock faible</option>
+          <option value="out_of_stock">Rupture</option>
+        </select>
+
         <button className="h-12 w-12 flex items-center justify-center rounded-xl bg-secondary/50 text-muted-foreground hover:bg-primary hover:text-white transition-all">
           <Filter className="h-4 w-4" />
         </button>
@@ -242,7 +261,7 @@ const AdminProducts = () => {
         </button>
       </div>
 
-      <div className="rounded-3xl border border-border/40 bg-white shadow-sm overflow-hidden">
+      <div className="rounded-3xl border border-border/40 bg-white shadow-sm overflow-hidden overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-secondary/20 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 border-b border-border/20">
@@ -278,7 +297,7 @@ const AdminProducts = () => {
                     </div>
                   </td>
                   <td className="px-8 py-5">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{p.category?.name.fr || 'N/A'}</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{p.category?.name?.fr || 'N/A'}</span>
                   </td>
                   <td className="px-8 py-5">
                     <span className="text-[10px] font-black uppercase tracking-widest text-primary italic font-bold">{p.brand}</span>
@@ -320,8 +339,8 @@ const AdminProducts = () => {
               <div className="space-y-3">
                 <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Nom du Produit (FR)</Label>
                 <Input
-                  value={editingProduct?.name?.fr}
-                  onChange={e => setEditingProduct({ ...editingProduct, name: { ...editingProduct.name!, fr: e.target.value } })}
+                  value={editingProduct?.name?.fr || ''}
+                  onChange={e => setEditingProduct({ ...editingProduct, name: { ...editingProduct?.name!, fr: e.target.value } })}
                   required
                   className="h-12 rounded-xl bg-secondary/30 border-none font-bold placeholder:text-muted-foreground/20"
                 />
@@ -451,7 +470,7 @@ const AdminProducts = () => {
               <textarea
                 className="w-full min-h-[120px] rounded-2xl bg-secondary/30 border-none p-6 text-xs font-bold leading-relaxed placeholder:text-muted-foreground/20 focus:ring-2 focus:ring-primary/20"
                 value={editingProduct?.description?.fr || ''}
-                onChange={e => setEditingProduct({ ...editingProduct, description: { ...editingProduct.description!, fr: e.target.value } })}
+                onChange={e => setEditingProduct({ ...editingProduct, description: { ...editingProduct?.description!, fr: e.target.value } })}
                 placeholder="Saisissez les détails techniques du produit..."
               />
             </div>
@@ -473,14 +492,14 @@ const AdminProducts = () => {
 };
 
 const statusColors: Record<string, string> = {
-  in_stock: 'bg-success/10 text-success border-success/20',
-  low_stock: 'bg-warning/10 text-warning border-warning/20',
-  out_of_stock: 'bg-destructive/10 text-destructive border-destructive/20',
+  in_stock: 'bg-green-500/10 text-green-500 border-green-500/20',
+  low_stock: 'bg-orange-500/10 text-orange-500 border-orange-500/20',
+  out_of_stock: 'bg-red-500/10 text-red-500 border-red-500/20',
 };
 
 const StatusBadge = ({ status }: { status: string }) => (
   <span className={cn("inline-flex items-center rounded-full border px-3 py-1 text-[8px] font-black uppercase tracking-widest", statusColors[status] || 'bg-secondary text-muted-foreground border-border')}>
-    <div className={cn("h-1 w-1 rounded-full mr-1.5", status === 'in_stock' ? 'bg-success' : status === 'low_stock' ? 'bg-warning animate-pulse' : 'bg-destructive')} />
+    <div className={cn("h-1 w-1 rounded-full mr-1.5", status === 'in_stock' ? 'bg-green-500' : status === 'low_stock' ? 'bg-orange-500 animate-pulse' : 'bg-red-500')} />
     {status === 'in_stock' ? 'En Stock' : status === 'low_stock' ? 'Faible' : 'Rupture'}
   </span>
 );

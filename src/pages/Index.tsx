@@ -7,10 +7,15 @@ import TestimonialsSection from '@/components/home/TestimonialsSection';
 import TrustSection from '@/components/home/TrustSection';
 import NewsletterSection from '@/components/home/NewsletterSection';
 import ContactSection from '@/components/home/ContactSection';
+import SEO from '@/components/common/SEO';
 
 const Index = () => {
   return (
     <div className="flex min-h-screen flex-col">
+      <SEO
+        title="Laptop Pro | Accueil"
+        description="Bienvenue chez Laptop Pro, votre expert en ordinateurs portables professionnels au Maroc. Découvrez nos sélections exclusives."
+      />
       <Header />
       <main className="flex-1">
         <HeroSection />

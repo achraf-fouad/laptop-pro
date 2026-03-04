@@ -10,12 +10,18 @@ class Order extends Model
         'user_id',
         'status',
         'total_amount',
+        'payment_method',
         'customer_name',
         'customer_email',
         'customer_phone',
         'shipping_address',
         'notes'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function orderItems()
     {

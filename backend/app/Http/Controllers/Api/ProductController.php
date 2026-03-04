@@ -4,99 +4,105 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\ProductImage;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
+use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
+    use ApiResponses;
+
     public function index()
     {
-        return Product::with('category')->latest()->get();
+        $products = \Illuminate\Support\Facades\Cache::remember('products_index', 3600, function () {
+            return Product::with(['category', 'productImages'])->latest()->get();
+        });
+
+        return \App\Http\Resources\ProductResource::collection($products);
     }
 
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|array',
-            'description' => 'required|array',
-            'price' => 'required|numeric',
-            'original_price' => 'nullable|numeric',
-            'category_id' => 'required|integer|exists:categories,id',
-            'brand' => 'required|string',
-            'stock' => 'required|integer',
-            'stock_status' => 'required|string|in:in_stock,low_stock,out_of_stock',
-            'images' => 'required|array|max:10',
-            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048', // 2MB max
-            'specs' => 'nullable|array',
-            'compatibility' => 'nullable|array',
-            'featured' => 'nullable|boolean',
-        ]);
+        $validated = $request->validated();
 
-        $imagePaths = [];
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $filename = uniqid() . '_' . time() . '.' . $image->getClientOriginalExtension();
-                $path = $image->storeAs('products', $filename, 'public');
-                $imagePaths[] = url('storage/' . $path);
+        return DB::transaction(function () use ($request, $validated) {
+            $product = Product::create($validated);
+
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $index => $image) {
+                    $path = $image->store('products', 'public');
+                    $product->productImages()->create([
+                        'path' => $path,
+                        'sort_order' => $index,
+                    ]);
+                }
             }
-        }
 
-        $validated['images'] = $imagePaths;
-
-        $product = Product::create($validated);
-
-        return response()->json($product, 201);
+            return $this->success(new \App\Http\Resources\ProductResource($product->load('productImages')), 'Produit créé avec succès', 201);
+        });
     }
 
     public function show($id)
     {
-        return Product::with([
-            'category',
-            'reviews' => function ($query) {
-                $query->where('status', 'approved')->latest();
-            }
-        ])->findOrFail($id);
-    }
+        $product = \Illuminate\Support\Facades\Cache::remember("product_show_{$id}", 3600, function () use ($id) {
+            return Product::with([
+                'category',
+                'productImages',
+                'reviews' => function ($query) {
+                    $query->where('approved', true)->latest();
+                },
+                'reviews.user'
+            ])->find($id);
+        });
 
-    public function update(Request $request, Product $product)
-    {
-        $validated = $request->validate([
-            'name' => 'nullable|array',
-            'description' => 'nullable|array',
-            'price' => 'nullable|numeric',
-            'original_price' => 'nullable|numeric',
-            'category_id' => 'nullable|integer|exists:categories,id',
-            'brand' => 'nullable|string',
-            'stock' => 'nullable|integer',
-            'stock_status' => 'nullable|string|in:in_stock,low_stock,out_of_stock',
-            'images' => 'nullable|array|max:10',
-            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
-            'existing_images' => 'nullable|array',
-            'specs' => 'nullable|array',
-            'compatibility' => 'nullable|array',
-            'featured' => 'nullable|boolean',
-        ]);
-
-        $imagePaths = $request->input('existing_images', []);
-
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                if (count($imagePaths) >= 10)
-                    break;
-                $filename = uniqid() . '_' . time() . '.' . $image->getClientOriginalExtension();
-                $path = $image->storeAs('products', $filename, 'public');
-                $imagePaths[] = url('storage/' . $path);
-            }
+        if (!$product) {
+            return $this->error('Produit non trouvé.', 404);
         }
 
-        $validated['images'] = $imagePaths;
+        return new \App\Http\Resources\ProductResource($product);
+    }
 
-        $product->update($validated);
-        return $product->load('category');
+    public function update(UpdateProductRequest $request, Product $product)
+    {
+        $validated = $request->validated();
+
+        return DB::transaction(function () use ($request, $validated, $product) {
+            $product->update($validated);
+
+            if ($request->hasFile('images')) {
+                // Determine starting sort order if keeping existing images
+                $existingCount = $product->productImages()->count();
+
+                foreach ($request->file('images') as $index => $image) {
+                    if ($existingCount + $index >= 10)
+                        break;
+
+                    $path = $image->store('products', 'public');
+                    $product->productImages()->create([
+                        'path' => $path,
+                        'sort_order' => $existingCount + $index,
+                    ]);
+                }
+            }
+
+            return $this->success(new \App\Http\Resources\ProductResource($product->load(['category', 'productImages'])), 'Produit mis à jour');
+        });
     }
 
     public function destroy(Product $product)
     {
-        $product->delete();
-        return response()->noContent();
+        return DB::transaction(function () use ($product) {
+            // Delete physical images
+            foreach ($product->productImages as $image) {
+                Storage::disk('public')->delete($image->path);
+            }
+            $product->delete();
+            return $this->success(null, 'Produit supprimé');
+        });
     }
 }
+

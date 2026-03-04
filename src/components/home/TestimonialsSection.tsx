@@ -24,7 +24,7 @@ const TestimonialsSection = () => {
     const fetchReviews = async () => {
       try {
         const { data } = await api.get('/reviews/featured');
-        setReviews(data);
+        setReviews(data.data || data);
       } catch (err) {
         console.error(err);
       }
@@ -37,10 +37,10 @@ const TestimonialsSection = () => {
   return (
     <section className="py-24 bg-[#0a0a0a] relative overflow-hidden">
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 opacity-30" />
-      
+
       <div className="container relative z-10 px-4 md:px-12 mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <motion.span 
+          <motion.span
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -48,7 +48,7 @@ const TestimonialsSection = () => {
           >
             {t('testimonials.tag')}
           </motion.span>
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -57,7 +57,7 @@ const TestimonialsSection = () => {
           >
             {t('testimonials.title')} <span className="text-primary italic">{t('testimonials.titleHighlight')}</span>
           </motion.h2>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}

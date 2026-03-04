@@ -3,10 +3,34 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Review;
+use App\Models\Product;
+use App\Traits\ApiResponses;
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
+    use ApiResponses;
+
+    /**
+     * Display a listing of reviews.
+     */
+    public function index(Request $request)
+    {
+        $query = Review::with(['product', 'user']);
+
+        if ($request->has('approved')) {
+            $query->where('approved', $request->boolean('approved'));
+        }
+
+        $reviews = $query->latest()->paginate(10);
+
+        return \App\Http\Resources\ReviewResource::collection($reviews);
+    }
+
+    /**
+     * Store a newly created review.
+     */
     public function store(Request $request, $productId)
     {
         $validated = $request->validate([
@@ -15,84 +39,85 @@ class ReviewController extends Controller
             'comment' => 'required|string|max:1000',
         ]);
 
-        $review = \App\Models\Review::create([
+        $review = Review::create([
             'product_id' => $productId,
+            'user_id' => auth()->id(),
             'author' => $validated['author'],
             'rating' => $validated['rating'],
             'comment' => $validated['comment'],
-            'status' => 'pending', // Default to pending so admin must approve
+            'approved' => false,
         ]);
 
-        return response()->json([
-            'message' => 'Review submitted successfully and is pending approval.',
-            'review' => $review
-        ], 201);
+        return $this->success(
+            new \App\Http\Resources\ReviewResource($review),
+            'Avis soumis avec succès et en attente d\'approbation.',
+            201
+        );
     }
 
-    // Public method for home page
-    public function featured()
+    /**
+     * Admin method to approve/reject review.
+     */
+    public function approve(Review $review)
     {
-        $reviews = \App\Models\Review::with('product:id,name,image')->where('status', 'approved')
-            ->where('is_featured', true)
-            ->latest()
-            ->get();
-            
-        return response()->json($reviews);
-    }
-
-    // Admin API
-    public function pending()
-    {
-        $reviews = \App\Models\Review::with('product:id,name,image')
-            ->orderBy('created_at', 'desc')
-            ->get();
-            
-        return response()->json($reviews);
-    }
-
-    public function approve(\App\Models\Review $review)
-    {
-        $review->update(['status' => 'approved']);
+        $review->update(['approved' => !$review->approved]);
         $this->updateProductRating($review->product_id);
-        
-        return response()->json(['message' => 'Review approved successfully', 'review' => $review]);
+
+        $status = $review->approved ? 'approuvé' : 'désapprouvé';
+        return $this->success(new \App\Http\Resources\ReviewResource($review), "Avis {$status} avec succès");
     }
 
-    public function decline(\App\Models\Review $review)
+    /**
+     * Admin method to reply to a review.
+     */
+    public function reply(Request $request, Review $review)
     {
-        $review->update(['status' => 'declined']);
-        $this->updateProductRating($review->product_id);
-        
-        return response()->json(['message' => 'Review declined successfully', 'review' => $review]);
+        $validated = $request->validate([
+            'reply' => 'required|string|max:1000',
+        ]);
+
+        $review->update(['reply' => $validated['reply']]);
+
+        return $this->success(new \App\Http\Resources\ReviewResource($review), 'Réponse ajoutée avec succès');
     }
 
-    public function toggleFeatured(\App\Models\Review $review)
+    /**
+     * Toggle review featured status.
+     */
+    public function toggleFeatured(Review $review)
     {
         $review->update(['is_featured' => !$review->is_featured]);
-        return response()->json(['message' => 'Review featured status updated', 'review' => $review]);
+        return $this->success(new \App\Http\Resources\ReviewResource($review), 'Statut "Mis en avant" mis à jour');
     }
 
-    public function destroy(\App\Models\Review $review)
+    /**
+     * Remove the specified review.
+     */
+    public function destroy(Review $review)
     {
         $productId = $review->product_id;
         $review->delete();
         $this->updateProductRating($productId);
-        
-        return response()->json(['message' => 'Review deleted successfully']);
+
+        return $this->success(null, 'Avis supprimé avec succès');
     }
 
+    /**
+     * Update product average rating and count.
+     */
     private function updateProductRating($productId)
     {
-        if (!$productId) return;
-        
-        $product = \App\Models\Product::find($productId);
+        if (!$productId)
+            return;
+
+        $product = Product::find($productId);
         if ($product) {
-            $approvedReviews = \App\Models\Review::where('product_id', $productId)
-                ->where('status', 'approved');
-                
+            $approvedReviews = Review::where('product_id', $productId)
+                ->where('approved', true);
+
             $count = $approvedReviews->count();
             $avg = $count > 0 ? $approvedReviews->avg('rating') : 0;
-            
+
             $product->update([
                 'rating' => round($avg, 1),
                 'review_count' => $count
@@ -100,3 +125,4 @@ class ReviewController extends Controller
         }
     }
 }
+

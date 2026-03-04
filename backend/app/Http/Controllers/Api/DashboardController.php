@@ -13,7 +13,7 @@ class DashboardController extends Controller
     public function stats()
     {
         return response()->json([
-            'total_sales' => (float) Order::where('status', 'confirmed')->sum('total_amount'),
+            'total_sales' => (float) Order::whereIn('status', ['paid', 'shipped', 'delivered'])->sum('total_amount'),
             'orders_count' => Order::count(),
             'products_count' => Product::count(),
             'pending_orders' => Order::where('status', 'pending')->count(),
@@ -23,9 +23,9 @@ class DashboardController extends Controller
     public function salesGraph()
     {
         $sales = Order::select(
-                DB::raw('DATE(created_at) as date'),
-                DB::raw('CAST(SUM(total_amount) AS DECIMAL(10,2)) as total')
-            )
+            DB::raw('DATE(created_at) as date'),
+            DB::raw('CAST(SUM(total_amount) AS DECIMAL(10,2)) as total')
+        )
             ->groupBy('date')
             ->orderBy('date')
             ->get();
@@ -42,14 +42,14 @@ class DashboardController extends Controller
     public function customers()
     {
         $customers = Order::select(
-                'customer_name as name',
-                'customer_email as email',
-                'customer_phone as phone',
-                'shipping_address',
-                DB::raw('COUNT(*) as orders_count'),
-                DB::raw('SUM(total_amount) as total_spent'),
-                DB::raw('MAX(created_at) as last_order_date')
-            )
+            'customer_name as name',
+            'customer_email as email',
+            'customer_phone as phone',
+            'shipping_address',
+            DB::raw('COUNT(*) as orders_count'),
+            DB::raw('SUM(total_amount) as total_spent'),
+            DB::raw('MAX(created_at) as last_order_date')
+        )
             ->groupBy('customer_email', 'customer_phone', 'customer_name', 'shipping_address')
             ->get()
             ->map(function ($c) {

@@ -14,6 +14,7 @@ const Products = () => {
   const { t, language } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryParam = searchParams.get('category') || '';
+  const searchParam = searchParams.get('search') || '';
   const [selectedBrand, setSelectedBrand] = useState('');
   const [sortBy, setSortBy] = useState('popularity');
   const [showFilters, setShowFilters] = useState(false);
@@ -72,18 +73,31 @@ const Products = () => {
       const allowedIds = getCategoryIds(categoryParam, categories);
       result = result.filter(p => p.category_id && allowedIds.includes(p.category_id));
     }
+    
+    if (searchParam) {
+      const lowerQuery = searchParam.toLowerCase();
+      result = result.filter(p => {
+        const name = p.name[language] || p.name.fr || p.name.en || '';
+        const description = typeof p.description === 'string' ? p.description : (p.description?.[language] || p.description?.fr || p.description?.en || '');
+        return name.toLowerCase().includes(lowerQuery) || 
+               description.toLowerCase().includes(lowerQuery) ||
+               (p.brand && p.brand.toLowerCase().includes(lowerQuery));
+      });
+    }
+
     if (selectedBrand) result = result.filter(p => p.brand === selectedBrand);
     if (sortBy === 'price-asc') result.sort((a, b) => a.price - b.price);
     else if (sortBy === 'price-desc') result.sort((a, b) => b.price - a.price);
     else if (sortBy === 'name') result.sort((a, b) => (a.name[language] || '').localeCompare(b.name[language] || ''));
     else result.sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0));
     return result;
-  }, [products, categoryParam, categories, selectedBrand, sortBy, language]);
+  }, [products, categoryParam, searchParam, categories, selectedBrand, sortBy, language]);
 
   const setCategory = (cat: string) => {
-    if (cat) searchParams.set('category', cat);
-    else searchParams.delete('category');
-    setSearchParams(searchParams);
+    const newParams = new URLSearchParams(searchParams);
+    if (cat) newParams.set('category', cat);
+    else newParams.delete('category');
+    setSearchParams(newParams);
   };
 
   const currentCategoryName = useMemo(() => {
@@ -120,12 +134,22 @@ const Products = () => {
                 <span className="text-primary italic">{currentCategoryName}</span>
               </>
             )}
+            {searchParam && (
+              <>
+                <ChevronRight className="h-3 w-3 opacity-20" />
+                <span className="text-primary italic">Search: {searchParam}</span>
+              </>
+            )}
           </nav>
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
               <h1 className="text-4xl font-black uppercase tracking-tighter text-foreground leading-none">
-                {t('products.title')} <span className="text-primary italic">{t('products.titleHighlight')}</span>
+                {searchParam ? (
+                  <>Results for <span className="text-primary italic">"{searchParam}"</span></>
+                ) : (
+                  <>{t('products.title')} <span className="text-primary italic">{t('products.titleHighlight')}</span></>
+                )}
               </h1>
               <p className="mt-2 text-xs font-bold uppercase tracking-widest text-muted-foreground/60">
                 {filtered.length} {t('products.found')}
@@ -250,7 +274,13 @@ const Products = () => {
                   </div>
                   <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">{t('products.noResults')}</p>
                   <button
-                    onClick={() => { setCategory(''); setSelectedBrand(''); }}
+                    onClick={() => { 
+                      const newParams = new URLSearchParams(searchParams);
+                      newParams.delete('category');
+                      newParams.delete('search');
+                      setSearchParams(newParams);
+                      setSelectedBrand(''); 
+                    }}
                     className="mt-6 text-xs font-black text-primary underline underline-offset-4 uppercase tracking-widest"
                   >
                     {t('products.resetFilters')}

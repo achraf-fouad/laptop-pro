@@ -32,7 +32,7 @@ class ReviewController extends Controller
     // Public method for home page
     public function featured()
     {
-        $reviews = \App\Models\Review::with('product:id,name,image')->where('status', 'approved')
+        $reviews = \App\Models\Review::with('product:id,name,images')->where('status', 'approved')
             ->where('is_featured', true)
             ->latest()
             ->get();
@@ -43,7 +43,7 @@ class ReviewController extends Controller
     // Admin API
     public function pending()
     {
-        $reviews = \App\Models\Review::with('product:id,name,image')
+        $reviews = \App\Models\Review::with('product:id,name,images')
             ->orderBy('created_at', 'desc')
             ->get();
             

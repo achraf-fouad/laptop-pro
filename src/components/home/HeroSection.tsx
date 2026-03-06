@@ -65,11 +65,11 @@ const HeroSection = () => {
             <span className="inline-block px-3 py-1 bg-primary text-[10px] font-black tracking-widest uppercase mb-4 rounded-sm">
               {slides[current].tag}
             </span>
-            <h1 className="text-4xl lg:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-4">
+            <h1 className="text-3xl md:text-5xl lg:text-7xl font-black uppercase tracking-tighter leading-[1] md:leading-[0.9] mb-4">
               {slides[current].title} <br />
               <span className="text-primary italic">{slides[current].subtitle}</span>
             </h1>
-            <p className="text-sm lg:text-lg text-white/70 font-medium uppercase tracking-wide max-w-lg mb-8">
+            <p className="text-xs md:text-base lg:text-lg text-white/70 font-medium uppercase tracking-wide max-w-lg mb-8">
               {slides[current].description}
             </p>
             <div className="flex items-center gap-4">

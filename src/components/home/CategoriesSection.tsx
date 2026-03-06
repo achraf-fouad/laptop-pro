@@ -44,12 +44,12 @@ const CategoriesSection = () => {
   return (
     <section className="py-16 lg:py-24 bg-background">
       <div className="container mx-auto px-4 lg:px-12">
-        <div className="flex items-end justify-between mb-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
           <div>
-            <h2 className="text-3xl font-black uppercase tracking-tighter text-foreground leading-[0.8] mb-4">
+            <h2 className="text-3xl md:text-3xl lg:text-4xl font-black uppercase tracking-tighter text-foreground leading-tight md:leading-none mb-4">
               {t('categories.title')} <span className="text-primary italic">{t('categories.titleHighlight')}</span>
             </h2>
-            <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">{t('categories.subtitle')}</p>
+            <p className="text-xs md:text-sm font-bold uppercase tracking-widest text-muted-foreground">{t('categories.subtitle')}</p>
           </div>
           <Link to="/products" className="hidden lg:flex items-center gap-2 text-xs font-black uppercase tracking-widest text-primary hover:gap-4 transition-all group">
             {t('nav.allCatalog')}

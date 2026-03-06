@@ -52,6 +52,7 @@ const Cart = () => {
         items: items.map(item => ({ product_id: item.product.id, quantity: item.quantity, price: item.product.price }))
       });
       setOrderPlaced(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       toast({ title: t('cart.orderSuccess') });
       clearCart();
     } catch {
@@ -100,17 +101,17 @@ const Cart = () => {
                 {items.map(item => (
                   <motion.div key={item.product.id} layout className="group bg-white rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center gap-6">
                     <Link to={`/product/${item.product.id}`} className="shrink-0 h-24 w-24 bg-secondary p-2 rounded-xl flex items-center justify-center">
-                      <img src={item.product.image} alt={item.product.name[language] || item.product.name.fr} className="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-500" />
+                      <img src={item.product.images?.[0]} alt={item.product.name[language] || item.product.name.fr} className="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-500" />
                     </Link>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1 underline underline-offset-4">{item.product.brand}</p>
-                      <Link to={`/product/${item.product.id}`}>
-                        <h3 className="text-sm font-black uppercase tracking-tighter text-foreground hover:text-primary transition-colors line-clamp-2 leading-tight">{item.product.name[language] || item.product.name.fr}</h3>
-                      </Link>
-                      <button onClick={() => removeFromCart(item.product.id)} className="mt-4 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-destructive/40 hover:text-destructive transition-colors group/del">
-                        <Trash2 className="h-3 w-3 group-hover:rotate-12 transition-transform" />{t('cart.remove')}
-                      </button>
-                    </div>
+  <div className="flex-1 min-w-0 pointer-events-none sm:pointer-events-auto">
+    <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1 underline underline-offset-4">{item.product.brand}</p>
+    <Link to={`/product/${item.product.id}`} className="pointer-events-auto">
+      <h3 className="text-sm font-black uppercase tracking-tighter text-foreground hover:text-primary transition-colors line-clamp-2 leading-tight">{item.product.name[language] || item.product.name.fr}</h3>
+    </Link>
+    <button onClick={() => removeFromCart(item.product.id)} className="mt-4 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-destructive/40 hover:text-destructive transition-colors group/del pointer-events-auto">
+      <Trash2 className="h-3 w-3 group-hover:rotate-12 transition-transform" />{t('cart.remove')}
+    </button>
+  </div>
                     <div className="flex flex-col sm:items-center gap-4 sm:ml-auto">
                       <div className="flex items-center bg-secondary rounded-full p-1 border">
                         <button onClick={() => updateQuantity(item.product.id, item.quantity - 1)} className="h-8 w-8 flex items-center justify-center text-foreground/70 hover:bg-white hover:text-primary rounded-full transition-all"><Minus className="h-3 w-3" /></button>

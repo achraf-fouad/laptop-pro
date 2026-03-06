@@ -1,8 +1,9 @@
+import { forwardRef } from 'react';
 import { Product } from '@/types/product';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
-import { Link } from 'react-router-dom';
-import { ShoppingCart, Star, Eye, Zap } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ShoppingCart, Star, Eye, Zap, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface ProductCardProps {
@@ -10,9 +11,17 @@ interface ProductCardProps {
   index?: number;
 }
 
-const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
+const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(({ product, index = 0 }, ref) => {
   const { language, t } = useLanguage();
   const { addToCart } = useCart();
+  const navigate = useNavigate();
+
+  const handleQuickBuy = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart(product);
+    navigate('/cart');
+  };
 
   const stockLabel =
     product.stock_status === 'in_stock' ? t('featured.inStock') :
@@ -30,6 +39,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
 
   return (
     <motion.div
+      ref={ref}
       initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
@@ -48,16 +58,14 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
         )}
       </div>
 
-      <div className="relative aspect-square overflow-hidden bg-[#fcfcfc] flex items-center justify-center p-6">
-        <Link to={`/product/${product.id}`} className="w-full h-full">
-          <img src={product.images && product.images.length > 0 ? product.images[0] : ''} alt={name} className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-110" loading="lazy" />
-        </Link>
-        <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2 z-10 pointer-events-none group-hover:pointer-events-auto">
-          <button className="h-10 w-10 bg-white rounded-full flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all shadow-lg translate-y-4 group-hover:translate-y-0 duration-300">
-            <Link to={`/product/${product.id}`}><Eye className="h-4 w-4" /></Link>
-          </button>
+      <Link to={`/product/${product.id}`} className="block relative aspect-square overflow-hidden bg-[#fcfcfc] flex items-center justify-center p-6">
+        <img src={product.images && product.images.length > 0 ? product.images[0] : ''} alt={name} className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+        <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2 z-10">
+          <div className="h-10 w-10 bg-white rounded-full flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all shadow-lg translate-y-4 group-hover:translate-y-0 duration-300">
+            <Eye className="h-4 w-4" />
+          </div>
         </div>
-      </div>
+      </Link>
 
       <div className="flex flex-1 flex-col p-4 pt-2 border-t border-border/30">
         <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
@@ -85,14 +93,24 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
               {formatPrice(product.price)} <span className="text-xs font-bold not-italic">{currency}</span>
             </span>
           </div>
-          <button
-            onClick={() => addToCart(product)}
-            disabled={product.stock_status === 'out_of_stock'}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-secondary py-2.5 text-[10px] font-black uppercase tracking-widest text-foreground transition-all hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed group/btn"
-          >
-            <ShoppingCart className="h-3.5 w-3.5 transition-transform group-hover/btn:-rotate-12" />
-            {t('featured.addToCart')}
-          </button>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => addToCart(product)}
+              disabled={product.stock_status === 'out_of_stock'}
+              className="flex items-center justify-center gap-2 rounded-full bg-secondary py-2.5 text-[9px] font-black uppercase tracking-widest text-foreground transition-all hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed group/btn"
+            >
+              <ShoppingCart className="h-3 w-3 transition-transform group-hover/btn:-rotate-12" />
+              {t('featured.addToCart')}
+            </button>
+            <button
+              onClick={handleQuickBuy}
+              disabled={product.stock_status === 'out_of_stock'}
+              className="flex items-center justify-center gap-2 rounded-full bg-primary text-white py-2.5 text-[9px] font-black uppercase tracking-widest transition-all hover:bg-primary/90 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Zap className="h-3 w-3 fill-current" />
+              {t('product.quickBuy')}
+            </button>
+          </div>
           <div className="mt-2 flex items-center justify-between text-[8px] font-black uppercase tracking-wider">
             <span className={stockColor}>{stockLabel}</span>
             <span className="text-muted-foreground/40">REF: {product.id.toString().padStart(6, '0')}</span>
@@ -101,6 +119,8 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
       </div>
     </motion.div>
   );
-};
+});
+
+ProductCard.displayName = 'ProductCard';
 
 export default ProductCard;

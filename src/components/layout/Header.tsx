@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
@@ -12,7 +12,9 @@ const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -20,12 +22,20 @@ const Header = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const handleSearch = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+      setMobileOpen(false);
+    }
+  };
+
   const categories = [
-    { id: 'laptops', label: t('nav.laptops'), to: '/products?category=laptops' },
-    { id: 'screens', label: t('nav.screens'), to: '/products?category=screens' },
-    { id: 'peripherals', label: t('nav.peripherals'), to: '/products?category=peripherals' },
-    { id: 'gaming', label: t('nav.gaming'), to: '/products?category=gaming' },
-    { id: 'printers', label: t('nav.printers'), to: '/products?category=printers' },
+    { id: 'laptops', label: t('nav.laptops'), to: '/products?category=laptops-portables' },
+    { id: 'screens', label: t('nav.screens'), to: '/products?category=screens-monitors' },
+    { id: 'peripherals', label: t('nav.peripherals'), to: '/products?category=pc-peripherals' },
+    { id: 'gaming', label: t('nav.gaming'), to: '/products?category=consoles-gaming' },
+    { id: 'printers', label: t('nav.printers'), to: '/products?category=printers-scanners' },
   ];
 
   const navLinks = [
@@ -69,35 +79,40 @@ const Header = () => {
       >
         {/* Main Header */}
         <div className="border-b border-border">
-          <div className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-8 gap-8">
+          <div className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-8 gap-2 lg:gap-8">
             <Link to="/" className="group flex items-center gap-2.5 shrink-0">
-              <div className="flex h-12 w-12 items-center justify-center bg-primary rounded-xl shadow-lg shadow-primary/20">
-                <span className="text-2xl font-black italic text-white flex items-center justify-center">CA</span>
+              <div className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center bg-primary rounded-xl shadow-lg shadow-primary/20">
+                <span className="text-xl md:text-2xl font-black italic text-white flex items-center justify-center">CA</span>
               </div>
-              <div className="flex flex-col">
-                <span className="text-2xl font-black uppercase tracking-tighter">
+              <div className="flex flex-col hidden sm:flex">
+                <span className="text-lg md:text-2xl font-black uppercase tracking-tighter">
                   Computer <span className="text-primary italic">Access</span>
                 </span>
-                <span className="hidden text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground sm:block">
+                <span className="hidden text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground md:block">
                   High-End Solutions
                 </span>
               </div>
             </Link>
 
             <div className="hidden flex-1 max-w-2xl lg:flex items-center relative">
-              <div className={`flex flex-1 items-center rounded-full bg-secondary/80 border transition-all duration-200 px-4 py-1 ${isSearchFocused ? 'border-primary ring-4 ring-primary/10' : 'border-transparent'}`}>
+              <form 
+                onSubmit={handleSearch}
+                className={`flex flex-1 items-center rounded-full bg-secondary/80 border transition-all duration-200 px-4 py-1 ${isSearchFocused ? 'border-primary ring-4 ring-primary/10' : 'border-transparent'}`}
+              >
                 <Search className="h-4 w-4 text-muted-foreground mr-3" />
                 <input 
                   type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t('nav.search')}
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
-                  className="flex-1 bg-transparent border-none focus:ring-0 text-sm h-10 placeholder:text-muted-foreground/60"
+                  className="flex-1 bg-transparent border-none focus:ring-0 text-sm h-10 placeholder:text-muted-foreground/60 w-full outline-none"
                 />
-                <button className="bg-primary text-white text-xs font-bold px-5 py-2 rounded-full hover:bg-primary/90 transition-colors ml-2">
+                <button type="submit" className="bg-primary text-white text-xs font-bold px-5 py-2 rounded-full hover:bg-primary/90 transition-colors ml-2">
                   {t('nav.searchBtn')}
                 </button>
-              </div>
+              </form>
             </div>
 
             <div className="flex items-center gap-2 lg:gap-4">
@@ -110,7 +125,7 @@ const Header = () => {
                     </span>
                   )}
                 </div>
-                <span className="text-[10px] font-bold text-muted-foreground group-hover:text-primary transition-colors uppercase">{t('nav.cart')}</span>
+                <span className="hidden md:block text-[10px] font-bold text-muted-foreground group-hover:text-primary transition-colors uppercase">{t('nav.cart')}</span>
               </Link>
               <LanguageSwitcher />
               <button
@@ -164,6 +179,16 @@ const Header = () => {
               className="overflow-hidden border-t border-border bg-card md:hidden"
             >
               <nav className="flex flex-col gap-0.5 p-3">
+                <form onSubmit={handleSearch} className="flex items-center rounded-full bg-secondary/80 border border-transparent focus-within:border-primary px-3 py-1 mb-2">
+                  <Search className="h-4 w-4 text-muted-foreground mr-2" />
+                  <input 
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={t('nav.search')}
+                    className="flex-1 bg-transparent border-none focus:ring-0 text-sm h-10 p-0 outline-none w-full"
+                  />
+                </form>
                 {navLinks.map(link => (
                   <Link
                     key={link.to}

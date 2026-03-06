@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
 import Header from '@/components/layout/Header';
@@ -25,6 +25,7 @@ interface Product extends BaseProduct {
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { language, t } = useLanguage();
   const { addToCart } = useCart();
   const [added, setAdded] = useState(false);
@@ -97,6 +98,11 @@ const ProductDetail = () => {
     addToCart(product);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
+  };
+
+  const handleQuickBuy = () => {
+    addToCart(product);
+    navigate('/cart');
   };
 
   const name = product.name[language] || product.name.fr || product.name.en || '';
@@ -172,7 +178,11 @@ const ProductDetail = () => {
                   {added ? <Check className="h-5 w-5" /> : <ShoppingCart className="h-5 w-5" />}
                   {added ? t('product.addedToCart') : t('product.addToCart')}
                 </button>
-                <button className="flex items-center justify-center gap-4 border-2 border-foreground text-foreground p-5 rounded-full text-xs font-black uppercase tracking-widest hover:bg-foreground hover:text-white transition-all disabled:opacity-50" disabled={product.stock_status === 'out_of_stock'}>
+                <button 
+                  onClick={handleQuickBuy}
+                  className="flex items-center justify-center gap-4 border-2 border-foreground text-foreground p-5 rounded-full text-xs font-black uppercase tracking-widest hover:bg-foreground hover:text-white transition-all disabled:opacity-50" 
+                  disabled={product.stock_status === 'out_of_stock'}
+                >
                   {t('product.quickBuy')}
                 </button>
               </div>

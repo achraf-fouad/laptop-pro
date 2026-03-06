@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 
 interface Category {
@@ -28,6 +28,7 @@ interface Product {
   images: string[];
   stock: number;
   stock_status: string;
+  specs?: Record<string, string>;
 }
 
 const AdminProducts = () => {
@@ -40,6 +41,7 @@ const AdminProducts = () => {
 
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
+  const [specs, setSpecs] = useState<{key: string, value: string}[]>([]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -155,6 +157,13 @@ const AdminProducts = () => {
         formData.append('images[]', file);
       });
 
+      // Append specs
+      specs.forEach(({ key, value }) => {
+        if (key && value) {
+          formData.append(`specs[${key}]`, value);
+        }
+      });
+
       if (editingProduct.id) {
         formData.append('_method', 'PUT');
         await api.post(`/products/${editingProduct.id}`, formData, {
@@ -190,12 +199,15 @@ const AdminProducts = () => {
       stock_status: 'in_stock'
     });
     setSelectedFiles([]);
+    setSpecs([]);
     setIsDialogOpen(true);
   };
 
   const openEditDialog = (product: Product) => {
     setEditingProduct({ ...product });
     setSelectedFiles([]);
+    const productSpecs = product.specs ? Object.entries(product.specs).map(([key, value]) => ({ key, value })) : [];
+    setSpecs(productSpecs);
     setIsDialogOpen(true);
   };
 
@@ -309,10 +321,10 @@ const AdminProducts = () => {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl p-0 border-none shadow-2xl">
           <div className="bg-[#0a0a0a] text-white p-8">
-            <h2 className="text-2xl font-black uppercase tracking-tighter italic">
+            <DialogTitle className="text-2xl font-black uppercase tracking-tighter italic">
               {editingProduct?.id ? 'Modifier' : 'Nouveau'} <span className="text-primary italic">Produit</span>
-            </h2>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 mt-1">ÉDITION DU CATALOGUE EN TEMPS RÉEL</p>
+            </DialogTitle>
+            <DialogDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 mt-1">ÉDITION DU CATALOGUE EN TEMPS RÉEL</DialogDescription>
           </div>
 
           <form onSubmit={handleSave} className="p-8 space-y-10">
@@ -454,6 +466,51 @@ const AdminProducts = () => {
                 onChange={e => setEditingProduct({ ...editingProduct, description: { ...editingProduct.description!, fr: e.target.value } })}
                 placeholder="Saisissez les détails techniques du produit..."
               />
+            </div>
+
+            <div className="space-y-6">
+              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Caractéristiques (Specs)</Label>
+              <div className="flex flex-col gap-3">
+                {specs.map((spec, index) => (
+                  <div key={index} className="flex gap-4 items-center">
+                    <Input
+                      placeholder="Ex: Processeur"
+                      value={spec.key}
+                      onChange={e => {
+                        const newSpecs = [...specs];
+                        newSpecs[index].key = e.target.value;
+                        setSpecs(newSpecs);
+                      }}
+                      className="flex-1 h-12 rounded-xl bg-secondary/30 border-none font-bold"
+                    />
+                    <Input
+                      placeholder="Ex: Intel Core i7 12700H"
+                      value={spec.value}
+                      onChange={e => {
+                        const newSpecs = [...specs];
+                        newSpecs[index].value = e.target.value;
+                        setSpecs(newSpecs);
+                      }}
+                      className="flex-1 h-12 rounded-xl bg-secondary/30 border-none font-bold"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setSpecs(specs.filter((_, i) => i !== index))}
+                      className="h-12 w-12 flex items-center justify-center rounded-xl bg-destructive/10 text-destructive hover:bg-destructive hover:text-white transition-all shrink-0"
+                    >
+                      <Trash2 className="h-5 w-5" />
+                    </button>
+                  </div>
+                ))}
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setSpecs([...specs, { key: '', value: '' }])}
+                  className="h-12 rounded-xl border-dashed border-2 hover:border-primary hover:bg-primary/5 transition-all text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary w-full"
+                >
+                  <Plus className="h-4 w-4 mr-2" /> Ajouter une caractéristique
+                </Button>
+              </div>
             </div>
 
             <DialogFooter className="flex items-center gap-4 bg-secondary/20 -mx-8 -mb-8 p-8 rounded-b-3xl mt-12">

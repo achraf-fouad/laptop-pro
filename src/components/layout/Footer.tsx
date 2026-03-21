@@ -14,11 +14,11 @@ const Footer = () => {
   ];
 
   const usefulLinks = [
-    t('footer.about'),
-    t('footer.account'),
-    t('footer.trackOrder'),
-    t('footer.deliveryModes'),
-    t('footer.legal'),
+    { label: t('footer.about'), to: '/#about' },
+    { label: t('footer.account'), to: '#' },
+    { label: t('footer.trackOrder'), to: '#' },
+    { label: t('footer.deliveryModes'), to: '#' },
+    { label: t('footer.legal'), to: '#' },
   ];
 
   return (
@@ -29,10 +29,10 @@ const Footer = () => {
           <div className="lg:col-span-1">
             <Link to="/" className="group flex items-center gap-2.5 mb-8">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/20 transition-transform group-hover:scale-105">
-                <span className="text-2xl font-black italic text-white flex items-center justify-center">CA</span>
+                <span className="text-2xl font-black italic text-white flex items-center justify-center">ML</span>
               </div>
               <span className="text-2xl font-black uppercase tracking-tighter text-white">
-                Computer <span className="text-primary italic">Access</span>
+                Maroc <span className="text-primary italic">Laptop</span>
               </span>
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">
                 {t('footer.brandSub')}
@@ -42,7 +42,10 @@ const Footer = () => {
               {t('footer.description')}
             </p>
             <div className="flex items-center gap-4">
-              {[Facebook, Instagram, Twitter, Youtube].map((Icon, i) => (
+              <a href="https://www.facebook.com/profile.php?id=61583715811645" target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white hover:-translate-y-1 transition-all duration-300">
+                <Facebook className="h-5 w-5" />
+              </a>
+              {[Instagram, Twitter, Youtube].map((Icon, i) => (
                 <a key={i} href="#" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white hover:-translate-y-1 transition-all duration-300">
                   <Icon className="h-5 w-5" />
                 </a>
@@ -71,9 +74,9 @@ const Footer = () => {
             <ul className="space-y-4">
               {usefulLinks.map((link, i) => (
                 <li key={i}>
-                  <Link to="#" className="text-xs font-bold uppercase tracking-widest text-white/40 hover:text-primary transition-all flex items-center gap-2 group">
+                  <Link to={link.to} className="text-xs font-bold uppercase tracking-widest text-white/40 hover:text-primary transition-all flex items-center gap-2 group">
                     <ChevronRight className="h-3 w-3 opacity-20 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                    {link}
+                    {link.label}
                   </Link>
                 </li>
               ))}
@@ -99,7 +102,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-1">{t('footer.customerService')}</p>
-                  <p className="text-xs font-bold uppercase tracking-wider text-white">+212 5 22 45 45 45</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-white">+212 644-459980</p>
                 </div>
               </li>
               <li className="flex items-start gap-4">
@@ -108,7 +111,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-1">{t('footer.supportEmail')}</p>
-                  <p className="text-xs font-bold uppercase tracking-wider text-white italic">contact@computeraccess.ma</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-white italic">contact@MarocLaptop.com</p>
                 </div>
               </li>
             </ul>

@@ -56,6 +56,26 @@ class Product extends Model
 
     protected $appends = ['reviewCount', 'originalPrice'];
 
+    public function getImagesAttribute($value)
+    {
+        $images = is_string($value) ? json_decode($value, true) : $value;
+        $images = $images ?: [];
+        
+        $baseUrl = config('app.url');
+        // If we are in local and using artisan serve, we might be on port 8000
+        if (app()->isLocal() && !str_contains($baseUrl, ':8000')) {
+            $baseUrl = 'http://localhost:8000';
+        }
+
+        return array_map(function($image) use ($baseUrl) {
+            if (!$image) return '';
+            if (str_starts_with($image, 'http')) {
+                return $image;
+            }
+            return rtrim($baseUrl, '/') . '/' . ltrim($image, '/');
+        }, $images);
+    }
+
     public function getReviewCountAttribute()
     {
         return $this->attributes['review_count'] ?? 0;

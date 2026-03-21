@@ -20,10 +20,10 @@ const AdminLogin = () => {
       const { data } = await api.post('/login', { email, password });
       localStorage.setItem('admin_token', data.token);
       localStorage.setItem('admin_user', JSON.stringify(data.user));
-      toast.success('Login successful');
+      toast.success('Connexion réussie');
       navigate('/admin');
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Login failed');
+      toast.error(error.response?.data?.message || 'Échec de la connexion');
     } finally {
       setLoading(false);
     }
@@ -35,11 +35,11 @@ const AdminLogin = () => {
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-hero">
-              <span className="text-xl font-bold text-primary-foreground">B</span>
+              <span className="text-xl font-bold text-primary-foreground">M</span>
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">Admin Login</CardTitle>
-          <CardDescription>Enter your credentials to access the dashboard</CardDescription>
+          <CardTitle className="text-2xl font-bold">Connexion Admin</CardTitle>
+          <CardDescription>Entrez vos identifiants pour accéder au tableau de bord</CardDescription>
         </CardHeader>
         <form onSubmit={handleLogin}>
           <CardContent className="space-y-4">
@@ -48,14 +48,14 @@ const AdminLogin = () => {
               <Input 
                 id="email" 
                 type="email" 
-                placeholder="admin@antigravity.fr" 
+                placeholder="admin@MarocLaptop.com" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required 
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Mot de passe</Label>
               <Input 
                 id="password" 
                 type="password" 
@@ -67,7 +67,7 @@ const AdminLogin = () => {
           </CardContent>
           <CardFooter>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Logging in...' : 'Login'}
+              {loading ? 'Connexion en cours...' : 'Se connecter'}
             </Button>
           </CardFooter>
         </form>

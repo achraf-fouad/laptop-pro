@@ -5,7 +5,7 @@ import { categories as catData, brands } from '@/data/products';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/products/ProductCard';
-import { SlidersHorizontal, X, RefreshCw, ChevronRight, Home, LayoutGrid, List } from 'lucide-react';
+import { SlidersHorizontal, X, RefreshCw, ChevronRight, Home, LayoutGrid, List, ChevronDown, ChevronUp } from 'lucide-react';
 import api from '@/lib/api';
 import { Product, Category } from '@/types/product';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,6 +22,37 @@ const Products = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [expandedCategories, setExpandedCategories] = useState<Record<number, boolean>>({});
+
+  // Auto-expand parent if a child category is selected via URL
+  useEffect(() => {
+    if (categoryParam && categories.length > 0) {
+      const findParentId = (cats: Category[], targetSlugOrId: string): number | null => {
+        for (const cat of cats) {
+          if (cat.children) {
+            if (cat.children.some(child => child.slug === targetSlugOrId || child.id.toString() === targetSlugOrId)) {
+              return cat.id;
+            }
+            const foundId = findParentId(cat.children, targetSlugOrId);
+            if (foundId) return foundId;
+          }
+        }
+        return null;
+      };
+      
+      const parentId = findParentId(categories, categoryParam);
+      if (parentId) {
+        setExpandedCategories(prev => ({ ...prev, [parentId]: true }));
+      }
+    }
+  }, [categoryParam, categories]);
+
+  const toggleCategory = (id: number) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -208,29 +239,61 @@ const Products = () => {
                   >
                     {t('products.allCatalog')}
                   </button>
-                  {categories.map(cat => (
-                    <div key={cat.id} className="flex flex-col gap-1">
-                      <button
-                        onClick={() => setCategory(cat.slug)}
-                        className={`text-start text-[10px] font-black uppercase tracking-widest px-3 py-2.5 rounded-lg transition-all ${categoryParam === cat.slug ? 'bg-primary text-white shadow-md' : 'text-muted-foreground hover:bg-secondary'}`}
-                      >
-                        {cat.name[language]}
-                      </button>
-                      {cat.children && cat.children.length > 0 && (
-                        <div className="ml-4 pl-2 border-l border-border/50 flex flex-col gap-1 mt-1 mb-2">
-                          {cat.children.map(child => (
-                            <button
-                              key={child.id}
-                              onClick={() => setCategory(child.slug)}
-                              className={`text-start text-[9px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-md transition-all ${categoryParam === child.slug ? 'bg-primary/10 text-primary border border-primary/20' : 'text-muted-foreground/70 hover:text-primary'}`}
+                  {categories.map(cat => {
+                    const isExpanded = expandedCategories[cat.id];
+                    const hasChildren = cat.children && cat.children.length > 0;
+                    const isActive = categoryParam === cat.slug;
+                    
+                    return (
+                      <div key={cat.id} className="flex flex-col gap-1">
+                        <div className="flex items-center gap-1 group/cat">
+                          <button
+                            onClick={() => {
+                              setCategory(cat.slug);
+                              if (hasChildren) toggleCategory(cat.id);
+                            }}
+                            className={`flex-1 text-start text-[10px] font-black uppercase tracking-widest px-3 py-2.5 rounded-lg transition-all ${isActive ? 'bg-primary text-white shadow-md' : 'text-muted-foreground hover:bg-secondary'}`}
+                          >
+                            {cat.name[language]}
+                          </button>
+                          {hasChildren && (
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleCategory(cat.id);
+                              }}
+                              className={`p-2 rounded-lg transition-colors ${isExpanded ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-secondary'}`}
                             >
-                              {child.name[language]}
+                              {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
                             </button>
-                          ))}
+                          )}
                         </div>
-                      )}
-                    </div>
-                  ))}
+                        
+                        <AnimatePresence>
+                          {hasChildren && isExpanded && (
+                            <motion.div 
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              className="overflow-hidden"
+                            >
+                              <div className="ml-4 pl-2 border-l-2 border-primary/20 flex flex-col gap-1 mt-1 mb-2">
+                                {cat.children?.map(child => (
+                                  <button
+                                    key={child.id}
+                                    onClick={() => setCategory(child.slug)}
+                                    className={`text-start text-[9px] font-bold uppercase tracking-widest px-3 py-2 rounded-md transition-all ${categoryParam === child.slug ? 'bg-primary/10 text-primary border border-primary/20' : 'text-muted-foreground/70 hover:text-primary hover:bg-primary/5'}`}
+                                  >
+                                    {child.name[language]}
+                                  </button>
+                                ))}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 

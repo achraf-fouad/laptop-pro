@@ -54,14 +54,14 @@ const AdminLayout = () => {
       {/* Brand */}
       <div className="flex h-20 items-center gap-3 border-b border-white/5 px-6">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/20">
-          <span className="text-lg font-black italic text-white flex items-center justify-center">CA</span>
+          <span className="text-lg font-black italic text-white flex items-center justify-center">ML</span>
         </div>
         <div className="flex flex-col">
           <span className="text-sm font-black uppercase tracking-tighter">
-            Computer <span className="text-primary italic">Access</span>
+            Maroc <span className="text-primary italic">Laptop</span>
           </span>
           <span className="text-[8px] font-black uppercase tracking-[0.2em] text-white/40">
-            Control Panel
+            Tableau de Bord
           </span>
         </div>
       </div>
@@ -180,7 +180,7 @@ const AdminLayout = () => {
             <div className="h-8 w-px bg-border mx-2" />
             <div className="flex items-center gap-4 pl-2">
                <div className="hidden sm:flex flex-col items-end">
-                  <span className="text-[10px] font-black uppercase tracking-widest leading-none mb-1">Super Admin</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest leading-none mb-1">Administrateur</span>
                   <span className="text-[8px] font-bold text-success uppercase tracking-widest">En Ligne</span>
                </div>
                <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center text-white font-black italic shadow-lg shadow-primary/20">

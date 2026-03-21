@@ -62,8 +62,8 @@ class CategorySeeder extends Seeder
                 'name' => ['en' => 'Bags & Cases', 'fr' => 'Cartables', 'ar' => 'حقائب'],
                 'children' => [
                     ['name' => ['en' => 'Backpacks', 'fr' => 'Sac à dos', 'ar' => 'حقائب ظهر']],
-                    ['name' => ['en' => 'Sleeves', 'fr' => 'Sacoche', 'ar' => 'حقائب يد']],
-                    ['name' => ['en' => 'Housings', 'fr' => 'Housse', 'ar' => 'أغطية']],
+                    ['name' => ['en' => 'Messenger Bags', 'fr' => 'Sacoche', 'ar' => 'حقائب يد']],
+                    ['name' => ['en' => 'Sleeves', 'fr' => 'Housse', 'ar' => 'أغطية']],
                 ]
             ],
             [
@@ -71,7 +71,7 @@ class CategorySeeder extends Seeder
                 'children' => [
                     ['name' => ['en' => 'SSD', 'fr' => 'SSD', 'ar' => 'SSD']],
                     ['name' => ['en' => 'HDD', 'fr' => 'HDD', 'ar' => 'HDD']],
-                    ['name' => ['en' => 'External Drives', 'fr' => 'externe', 'ar' => 'قرص خارجي']],
+                    ['name' => ['en' => 'External Storage', 'fr' => 'externe', 'ar' => 'قرص خارجي']],
                     ['name' => ['en' => 'Drive Accessories', 'fr' => 'Accessoires disque dur', 'ar' => 'ملحقات الأقراص']],
                 ]
             ],

@@ -284,7 +284,9 @@ const AdminProducts = () => {
                         )}
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-xs font-black uppercase tracking-widest text-foreground group-hover:text-primary transition-colors truncate max-w-[200px]">{p.name.fr}</span>
+                        <span className="text-xs font-black uppercase tracking-widest text-foreground group-hover:text-primary transition-colors truncate max-w-[200px]">
+                          {typeof p.name === 'string' ? p.name : p.name?.fr || p.name?.en || 'Produit sans nom'}
+                        </span>
                         <span className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">REF: {p.id.toString().padStart(6, '0')}</span>
                       </div>
                     </div>

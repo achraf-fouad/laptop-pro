@@ -41,8 +41,8 @@ const Header = () => {
   const navLinks = [
     { to: '/', label: t('nav.home') },
     { to: '/products', label: t('nav.products') },
-    { to: '/about', label: t('nav.about') },
-    { to: '/contact', label: t('nav.contact') },
+    { to: '/#about', label: t('nav.about') },
+    { to: '/#contact', label: t('nav.contact') },
   ];
 
   const isActive = (to: string) => {
@@ -58,16 +58,16 @@ const Header = () => {
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer">
               <Phone className="h-3.5 w-3.5" />
-              <span>+212 6 69 97 34 83</span>
+              <span>+212 644-459980</span>
             </div>
-            <a href="mailto:contact@computeraccess.ma" className="flex items-center gap-2 hover:text-white transition-colors">
+            <a href="mailto:contact@MarocLaptop.com" className="flex items-center gap-2 hover:text-white transition-colors">
               <Mail className="h-3 w-3" />
-              <span>contact@computeraccess.ma</span>
+              <span>contact@MarocLaptop.com</span>
             </a>
           </div>
           <div className="flex items-center gap-4">
-            <Link to="/about" className="hover:text-white transition-colors">{t('nav.about')}</Link>
-            <Link to="/contact" className="hover:text-white transition-colors">{t('nav.contact')}</Link>            
+            <Link to="/#about" className="hover:text-white transition-colors">{t('nav.about')}</Link>
+            <Link to="/#contact" className="hover:text-white transition-colors">{t('nav.contact')}</Link>            
           </div>
         </div>
       </div>
@@ -82,11 +82,11 @@ const Header = () => {
           <div className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-8 gap-2 lg:gap-8">
             <Link to="/" className="group flex items-center gap-2.5 shrink-0">
               <div className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center bg-primary rounded-xl shadow-lg shadow-primary/20">
-                <span className="text-xl md:text-2xl font-black italic text-white flex items-center justify-center">CA</span>
+                <span className="text-xl md:text-2xl font-black italic text-white flex items-center justify-center">ML</span>
               </div>
               <div className="flex flex-col hidden sm:flex">
                 <span className="text-lg md:text-2xl font-black uppercase tracking-tighter">
-                  Computer <span className="text-primary italic">Access</span>
+                  Maroc <span className="text-primary italic">Laptop</span>
                 </span>
                 <span className="hidden text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground md:block">
                   High-End Solutions

@@ -174,16 +174,16 @@ const ProductDetail = () => {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
-                <button onClick={handleAdd} disabled={product.stock_status === 'out_of_stock'} className="flex items-center justify-center gap-4 bg-primary text-white p-5 rounded-full text-xs font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.03] transition-all disabled:opacity-50">
+                <button onClick={handleAdd} disabled={product.stock_status === 'out_of_stock'} className="flex items-center justify-center gap-2 bg-primary text-white p-5 rounded-full text-xs font-black uppercase tracking-wide shadow-xl shadow-primary/20 hover:scale-[1.03] transition-all disabled:opacity-50 whitespace-nowrap">
                   {added ? <Check className="h-5 w-5" /> : <ShoppingCart className="h-5 w-5" />}
-                  {added ? t('product.addedToCart') : t('product.addToCart')}
+                  <span>{added ? t('product.addedToCart') : t('product.addToCart')}</span>
                 </button>
                 <button 
                   onClick={handleQuickBuy}
-                  className="flex items-center justify-center gap-4 border-2 border-foreground text-foreground p-5 rounded-full text-xs font-black uppercase tracking-widest hover:bg-foreground hover:text-white transition-all disabled:opacity-50" 
+                  className="flex items-center justify-center gap-2 border-2 border-foreground text-foreground p-5 rounded-full text-xs font-black uppercase tracking-wide hover:bg-foreground hover:text-white transition-all disabled:opacity-50 whitespace-nowrap" 
                   disabled={product.stock_status === 'out_of_stock'}
                 >
-                  {t('product.quickBuy')}
+                  <span>{t('product.quickBuy')}</span>
                 </button>
               </div>
 

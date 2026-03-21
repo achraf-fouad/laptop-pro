@@ -43,12 +43,12 @@ const ContactSection = () => {
 
   const infoItems = [
     { icon: Phone, label: t('contact.phone'), value: '+212 6 00 00 00 00' },
-    { icon: Mail, label: t('contact.email'), value: 'contact@bh-tech.ma' },
+    { icon: Mail, label: t('contact.email'), value: 'contact@maroclaptop.ma' },
     { icon: MapPin, label: t('contact.address'), value: t('contact.addressValue') },
   ];
 
   return (
-    <section className="bg-secondary/30 py-16 lg:py-24">
+    <section id="contact" className="bg-secondary/30 py-16 lg:py-24">
       <div className="container mx-auto px-4 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

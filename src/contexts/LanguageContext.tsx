@@ -12,13 +12,13 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
-    const saved = localStorage.getItem('bh-tech-lang');
+    const saved = localStorage.getItem('MarocLaptop-lang');
     return (saved as Language) || 'fr';
   });
 
   const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem('bh-tech-lang', lang);
+    localStorage.setItem('MarocLaptop-lang', lang);
   }, []);
 
   const t = useCallback((key: string) => {

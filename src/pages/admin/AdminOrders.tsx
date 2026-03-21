@@ -20,7 +20,7 @@ interface Order {
   status: string;
   total_amount: string;
   created_at: string;
-  items?: OrderItem[];
+  order_items?: OrderItem[];
 }
 
 const statusColors: Record<string, string> = {
@@ -44,7 +44,7 @@ const AdminOrders = () => {
       const { data } = await api.get('/orders');
       setOrders(data);
     } catch (error) {
-      toast.error('Failed to fetch orders');
+      toast.error('Erreur lors du chargement des commandes');
     } finally {
       setLoading(false);
     }
@@ -57,10 +57,10 @@ const AdminOrders = () => {
   const handleAction = async (id: number, action: 'confirm' | 'decline') => {
     try {
       await api.post(`/orders/${id}/${action}`);
-      toast.success(`Order ${action}ed`);
+      toast.success(`Commande ${action === 'confirm' ? 'confirmée' : 'annulée'}`);
       fetchOrders();
     } catch (error) {
-      toast.error('Action failed');
+      toast.error('L\'action a échoué');
     }
   };
 
@@ -77,7 +77,7 @@ const AdminOrders = () => {
           <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
-            placeholder="Search orders..."
+            placeholder="Rechercher des commandes..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="h-9 w-full rounded-lg border border-border bg-background ps-9 pe-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring sm:w-64"
@@ -90,10 +90,10 @@ const AdminOrders = () => {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="h-9 rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
           >
-            <option value="all">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="confirmed">Confirmed</option>
-            <option value="declined">Declined</option>
+            <option value="all">Tous les Statuts</option>
+            <option value="pending">En attente</option>
+            <option value="confirmed">Confirmé</option>
+            <option value="declined">Annulé</option>
           </select>
           <Button variant="outline" size="sm" onClick={fetchOrders} disabled={loading}>
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
@@ -105,11 +105,11 @@ const AdminOrders = () => {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              <th className="px-4 py-3 text-start">Order ID</th>
-              <th className="px-4 py-3 text-start">Customer</th>
-              <th className="px-4 py-3 text-start">City</th>
+              <th className="px-4 py-3 text-start">Réf. Commande</th>
+              <th className="px-4 py-3 text-start">Client</th>
+              <th className="px-4 py-3 text-start">Adresse/Ville</th>
               <th className="px-4 py-3 text-end">Total</th>
-              <th className="px-4 py-3 text-start">Status</th>
+              <th className="px-4 py-3 text-start">Statut</th>
               <th className="px-4 py-3 text-start">Date</th>
               <th className="px-4 py-3 text-end">Actions</th>
             </tr>
@@ -118,7 +118,7 @@ const AdminOrders = () => {
             {loading ? (
               <tr><td colSpan={7} className="py-8 text-center"><RefreshCw className="h-6 w-6 animate-spin mx-auto text-primary" /></td></tr>
             ) : filtered.length === 0 ? (
-              <tr><td colSpan={7} className="py-8 text-center text-muted-foreground">No orders found.</td></tr>
+              <tr><td colSpan={7} className="py-8 text-center text-muted-foreground">Aucune commande trouvée.</td></tr>
             ) : (
               filtered.map((o) => (
                 <tr key={o.id} className="border-b border-border/50 last:border-0 hover:bg-secondary/30 transition-colors">
@@ -127,19 +127,28 @@ const AdminOrders = () => {
                     <div>
                       <p className="font-medium text-foreground">{o.customer_name}</p>
                       <p className="text-xs text-muted-foreground">{o.customer_phone}</p>
+                      <p className="text-[10px] text-primary/70 font-bold uppercase truncate max-w-[150px]">
+                        {o.order_items && o.order_items.length > 0 
+                          ? (o.order_items.length === 1 
+                              ? o.order_items[0].product.name.fr 
+                              : `${o.order_items[0].product.name.fr} + ${o.order_items.length - 1}...`) 
+                          : 'No items'}
+                      </p>
                     </div>
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">{o.shipping_address}</td>
                   <td className="px-4 py-3 text-end font-medium text-foreground">{parseFloat(o.total_amount).toLocaleString()} DH</td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${statusColors[o.status] || ''}`}>
-                      {o.status}
+                      {o.status === 'pending' ? 'En attente' : 
+                       o.status === 'confirmed' ? 'Confirmé' : 
+                       o.status === 'declined' ? 'Annulé' : o.status}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-muted-foreground text-xs">{new Date(o.created_at).toLocaleDateString()}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">
-                      <button onClick={() => setSelectedOrder(o)} className="p-1.5 text-muted-foreground hover:text-foreground" title="View details">
+                      <button onClick={() => setSelectedOrder(o)} className="p-1.5 text-muted-foreground hover:text-foreground" title="Voir détails">
                         <Eye className="h-4 w-4" />
                       </button>
                       
@@ -175,28 +184,28 @@ const AdminOrders = () => {
       <Dialog open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Order Details #{selectedOrder?.id}</DialogTitle>
+            <DialogTitle>Détails de la Commande #{selectedOrder?.id}</DialogTitle>
           </DialogHeader>
           {selectedOrder && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-muted-foreground">Customer</p>
+                  <p className="text-muted-foreground">Client</p>
                   <p className="font-medium">{selectedOrder.customer_name}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Phone</p>
+                  <p className="text-muted-foreground">Téléphone</p>
                   <p className="font-medium">{selectedOrder.customer_phone}</p>
                 </div>
                 <div className="col-span-2">
-                  <p className="text-muted-foreground">Address</p>
+                  <p className="text-muted-foreground">Adresse</p>
                   <p className="font-medium">{selectedOrder.shipping_address}</p>
                 </div>
               </div>
               <div className="border-t pt-4">
-                <p className="font-semibold mb-2">Items</p>
+                <p className="font-semibold mb-2">Articles</p>
                 <div className="space-y-2">
-                  {selectedOrder.items?.map((item) => (
+                  {selectedOrder.order_items?.map((item) => (
                     <div key={item.id} className="flex justify-between text-sm">
                       <span>{item.product.name.fr} x{item.quantity}</span>
                       <span className="font-medium">{(item.price * item.quantity).toLocaleString()} DH</span>

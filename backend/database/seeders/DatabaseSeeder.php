@@ -18,12 +18,12 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
         ]);
 
-        if (!\App\Models\User::where('email', 'admin@antigravity.fr')->exists()) {
-            \App\Models\User::create([
+        \App\Models\User::updateOrCreate(
+            ['email' => 'admin@MarocLaptop.com'],
+            [
                 'name' => 'Admin',
-                'email' => 'admin@antigravity.fr',
-                'password' => \Illuminate\Support\Facades\Hash::make('secret123'),
-            ]);
-        }
+                'password' => \Illuminate\Support\Facades\Hash::make('YassirLaptop@2006'),
+            ]
+        );
     }
 }

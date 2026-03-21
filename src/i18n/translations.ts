@@ -72,11 +72,11 @@ export const translations: Record<Language, Record<string, string>> = {
     'testimonials.tag': 'Témoignages',
     'testimonials.title': 'Ce que disent nos',
     'testimonials.titleHighlight': 'Clients',
-    'testimonials.subtitle': 'DÉCOUVREZ LES AVIS DES UTILISATEURS QUI ONT FAIT CONFIANCE À COMPUTER ACCESS.',
+    'testimonials.subtitle': 'DÉCOUVREZ LES AVIS DES UTILISATEURS QUI ONT FAIT CONFIANCE À MAROCLAPTOP.',
     'testimonials.purchased': 'Acheté:',
 
     // Trust
-    'trust.title': 'Pourquoi Choisir bh-tech ?',
+    'trust.title': 'Pourquoi Choisir MarocLaptop ?',
     'trust.subtitle': 'Votre partenaire technologique de confiance',
     'trust.shipping': 'LIVRAISON PARTOUT',
     'trust.shippingDesc': 'AU MAROC SOUS 24/48H',
@@ -213,7 +213,7 @@ export const translations: Record<Language, Record<string, string>> = {
 
     // Footer
     'footer.description': 'VOTRE PARTENAIRE DE CONFIANCE POUR TOUT VOTRE MATÉRIEL INFORMATIQUE ET GAMING AU MAROC. QUALITÉ, PERFORMANCE ET SERVICE APRÈS-VENTE D\'EXCELLENCE.',
-    'footer.brandSub': 'MAROC TECHNOLOGY',
+    'footer.brandSub': 'MAROCLAPTOP',
     'footer.categories': 'Nos Rayons',
     'footer.cat.laptops': 'PC Portables',
     'footer.cat.screens': 'Ecrans & Moniteurs',
@@ -230,12 +230,12 @@ export const translations: Record<Language, Record<string, string>> = {
     'footer.headquarters': 'Siège Social',
     'footer.customerService': 'Service Client',
     'footer.supportEmail': 'Support Email',
-    'footer.rights': '© 2026 COMPUTER ACCESS. TOUS DROITS RÉSERVÉS. DESIGNED FOR PERFORMANCE.',
+    'footer.rights': '© 2026 MAROCLAPTOP. TOUS DROITS RÉSERVÉS. DESIGNED FOR PERFORMANCE.',
 
     // WhatsApp
     'whatsapp.tooltip': 'Besoin d\'aide ? Discutez avec nous sur WhatsApp',
     'whatsapp.label': 'Discuter avec nous sur WhatsApp',
-    'whatsapp.message': 'Bonjour, j\'ai besoin d\'aide avec un produit sur bh-tech.',
+    'whatsapp.message': 'Bonjour, j\'ai besoin d\'aide avec un produit sur MarocLaptop.',
 
     // Newsletter
     'newsletter.title': 'Restez Informé',
@@ -318,10 +318,10 @@ export const translations: Record<Language, Record<string, string>> = {
     'testimonials.tag': 'Testimonials',
     'testimonials.title': 'What our',
     'testimonials.titleHighlight': 'Customers Say',
-    'testimonials.subtitle': 'DISCOVER REVIEWS FROM USERS WHO TRUSTED COMPUTER ACCESS.',
+    'testimonials.subtitle': 'DISCOVER REVIEWS FROM USERS WHO TRUSTED MAROCLAPTOP.',
     'testimonials.purchased': 'Purchased:',
 
-    'trust.title': 'Why Choose bh-tech?',
+    'trust.title': 'Why Choose MarocLaptop?',
     'trust.subtitle': 'Your trusted technology partner',
     'trust.shipping': 'SHIPPING EVERYWHERE',
     'trust.shippingDesc': 'IN MOROCCO WITHIN 24/48H',
@@ -453,7 +453,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'contact.invalidEmail': 'Invalid email address',
 
     'footer.description': 'YOUR TRUSTED PARTNER FOR ALL YOUR COMPUTER AND GAMING EQUIPMENT IN MOROCCO. QUALITY, PERFORMANCE AND EXCELLENT AFTER-SALES SERVICE.',
-    'footer.brandSub': 'MOROCCO TECHNOLOGY',
+    'footer.brandSub': 'MAROCLAPTOP',
     'footer.categories': 'Our Departments',
     'footer.cat.laptops': 'Laptops',
     'footer.cat.screens': 'Screens & Monitors',
@@ -470,11 +470,11 @@ export const translations: Record<Language, Record<string, string>> = {
     'footer.headquarters': 'Headquarters',
     'footer.customerService': 'Customer Service',
     'footer.supportEmail': 'Support Email',
-    'footer.rights': '© 2026 COMPUTER ACCESS. ALL RIGHTS RESERVED. DESIGNED FOR PERFORMANCE.',
+    'footer.rights': '© 2026 MAROCLAPTOP. ALL RIGHTS RESERVED. DESIGNED FOR PERFORMANCE.',
 
     'whatsapp.tooltip': 'Need help? Chat with us on WhatsApp',
     'whatsapp.label': 'Chat with us on WhatsApp',
-    'whatsapp.message': 'Hello, I need help with a product on bh-tech.',
+    'whatsapp.message': 'Hello, I need help with a product on MarocLaptop.',
 
     'newsletter.title': 'Stay Informed',
     'newsletter.description': 'Subscribe to receive our exclusive offers and news.',
@@ -554,10 +554,10 @@ export const translations: Record<Language, Record<string, string>> = {
     'testimonials.tag': 'شهادات',
     'testimonials.title': 'ماذا يقول',
     'testimonials.titleHighlight': 'عملاؤنا',
-    'testimonials.subtitle': 'اكتشف آراء المستخدمين الذين وثقوا بـ COMPUTER ACCESS.',
+    'testimonials.subtitle': 'اكتشف آراء المستخدمين الذين وثقوا بـ MAROCLAPTOP.',
     'testimonials.purchased': 'اشترى:',
 
-    'trust.title': 'لماذا تختار bh-tech؟',
+    'trust.title': 'لماذا تختار MarocLaptop؟',
     'trust.subtitle': 'شريكك التقني الموثوق',
     'trust.shipping': 'توصيل لكل مكان',
     'trust.shippingDesc': 'في المغرب خلال 24/48 ساعة',
@@ -689,7 +689,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'contact.invalidEmail': 'عنوان بريد إلكتروني غير صالح',
 
     'footer.description': 'شريكك الموثوق لجميع معداتك المعلوماتية والألعاب في المغرب. الجودة والأداء وخدمة ما بعد البيع الممتازة.',
-    'footer.brandSub': 'تكنولوجيا المغرب',
+    'footer.brandSub': 'MarocLaptop',
     'footer.categories': 'أقسامنا',
     'footer.cat.laptops': 'أجهزة محمولة',
     'footer.cat.screens': 'شاشات ومراقب',
@@ -706,11 +706,11 @@ export const translations: Record<Language, Record<string, string>> = {
     'footer.headquarters': 'المقر الرئيسي',
     'footer.customerService': 'خدمة العملاء',
     'footer.supportEmail': 'البريد الإلكتروني للدعم',
-    'footer.rights': '© 2026 COMPUTER ACCESS. جميع الحقوق محفوظة.',
+    'footer.rights': '© 2026 MAROCLAPTOP. جميع الحقوق محفوظة.',
 
     'whatsapp.tooltip': 'هل تحتاج مساعدة؟ تحدث معنا عبر واتساب',
     'whatsapp.label': 'تحدث معنا عبر واتساب',
-    'whatsapp.message': 'مرحبًا، أحتاج مساعدة بخصوص منتج على bh-tech.',
+    'whatsapp.message': 'مرحبًا، أحتاج مساعدة بخصوص منتج على MarocLaptop.',
 
     'newsletter.title': 'ابقَ على اطلاع',
     'newsletter.description': 'اشترك لتلقي عروضنا الحصرية وآخر الأخبار.',

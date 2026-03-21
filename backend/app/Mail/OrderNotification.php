@@ -29,7 +29,7 @@ class OrderNotification extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Nouvelle Commande sur Computer Access - #' . $this->order->id,
+            subject: 'Nouvelle Commande sur MarocLaptop - #' . $this->order->id,
         );
     }
 

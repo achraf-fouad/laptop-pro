@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { FaWhatsapp } from "react-icons/fa6";
 
-const WHATSAPP_NUMBER = '212695143551';
+const WHATSAPP_NUMBER = '212644459980';
 
 const WhatsAppButton = () => {
   const [showTooltip, setShowTooltip] = useState(false);

@@ -19,12 +19,20 @@ interface SaleData {
   total: number;
 }
 
+interface OrderItem {
+  id: number;
+  product: { name: { fr: string } };
+  quantity: number;
+  price: number;
+}
+
 interface Order {
   id: number;
   customer_name: string;
   status: string;
   total_amount: string;
   created_at?: string;
+  order_items?: OrderItem[];
 }
 
 const AdminDashboard = () => {
@@ -257,7 +265,13 @@ const AdminDashboard = () => {
                   <td className="px-8 py-5">
                     <div className="flex flex-col">
                       <span className="text-xs font-black uppercase tracking-widest text-foreground">{o.customer_name}</span>
-                      <span className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest">Contact Direct</span>
+                      <span className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest">
+                        {o.order_items && o.order_items.length > 0 
+                          ? (o.order_items.length === 1 
+                              ? o.order_items[0].product.name.fr 
+                              : `${o.order_items[0].product.name.fr} + ${o.order_items.length - 1} autre(s)`) 
+                          : 'Aucun article'}
+                      </span>
                     </div>
                   </td>
                   <td className="px-8 py-5">

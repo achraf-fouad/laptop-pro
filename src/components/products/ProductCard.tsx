@@ -93,22 +93,22 @@ const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(({ product, ind
               {formatPrice(product.price)} <span className="text-xs font-bold not-italic">{currency}</span>
             </span>
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 gap-2">
             <button
               onClick={() => addToCart(product)}
               disabled={product.stock_status === 'out_of_stock'}
-              className="flex items-center justify-center gap-2 rounded-full bg-secondary py-2.5 text-[9px] font-black uppercase tracking-widest text-foreground transition-all hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed group/btn"
+              className="flex items-center justify-center gap-2 rounded-full bg-secondary py-2.5 text-[8px] sm:text-[9px] font-black uppercase tracking-wide text-foreground transition-all hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed group/btn whitespace-nowrap px-1"
             >
               <ShoppingCart className="h-3 w-3 transition-transform group-hover/btn:-rotate-12" />
-              {t('featured.addToCart')}
+              <span>{t('featured.addToCart')}</span>
             </button>
             <button
               onClick={handleQuickBuy}
               disabled={product.stock_status === 'out_of_stock'}
-              className="flex items-center justify-center gap-2 rounded-full bg-primary text-white py-2.5 text-[9px] font-black uppercase tracking-widest transition-all hover:bg-primary/90 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center justify-center gap-2 rounded-full bg-primary text-white py-2.5 text-[8px] sm:text-[9px] font-black uppercase tracking-wide transition-all hover:bg-primary/90 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap px-1"
             >
               <Zap className="h-3 w-3 fill-current" />
-              {t('product.quickBuy')}
+              <span>{t('product.quickBuy')}</span>
             </button>
           </div>
           <div className="mt-2 flex items-center justify-between text-[8px] font-black uppercase tracking-wider">

@@ -1,7 +1,7 @@
 <x-mail::message>
 # Nouvelle Commande Reçue !
 
-Une nouvelle commande a été passée sur **Computer Access**.
+Une nouvelle commande a été passée sur **MarocLaptop**.
 
 **Détails de la commande :**
 - **Commande ID :** #{{ $order->id }}

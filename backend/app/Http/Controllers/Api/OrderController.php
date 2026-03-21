@@ -47,7 +47,7 @@ class OrderController extends Controller
 
         // Send Email to Admin
         try {
-            \Illuminate\Support\Facades\Mail::to('fouadachraf707@gmail.com')
+            \Illuminate\Support\Facades\Mail::to('admin@MarocLaptop.com')
                 ->send(new \App\Mail\OrderNotification($order->fresh('orderItems.product')));
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Failed to send order notification: ' . $e->getMessage());

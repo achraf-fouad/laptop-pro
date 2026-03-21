@@ -1,0 +1,11 @@
+---
+deployment:
+  tasks:
+    # 🎨 DEPLOY FRONTEND (React) to public_html
+    - export DEPLOYPATH=/home/$USER/public_html
+    - /bin/cp -R dist/* $DEPLOYPATH
+
+    # ⚙️ DEPLOY BACKEND (Laravel) to a separate folder for security
+    - export BACKENDPATH=/home/$USER/backend
+    - /bin/mkdir -p $BACKENDPATH
+    - /bin/cp -R backend/* $BACKENDPATH

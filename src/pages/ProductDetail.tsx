@@ -112,7 +112,7 @@ const ProductDetail = () => {
   return (
     <div className="flex min-h-screen flex-col bg-[#fcfcfc]">
       <Header />
-      <main className="flex-1 py-12">
+      <main className="flex-1 py-6 md:py-12">
         <div className="container mx-auto px-4 lg:px-12">
           {/* Breadcrumb */}
           <nav className="mb-10 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
@@ -123,19 +123,19 @@ const ProductDetail = () => {
             <span className="text-foreground">{name}</span>
           </nav>
 
-          <div className="grid gap-16 lg:grid-cols-2">
+          <div className="grid gap-8 lg:gap-16 lg:grid-cols-2">
             {/* Gallery */}
             <div className="space-y-4">
-              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative overflow-hidden rounded-2xl border border-border/50 bg-white p-10 flex items-center justify-center shadow-sm aspect-square lg:aspect-auto lg:h-[600px]">
-                <img src={activeImage} alt={name} className="max-h-full max-w-full object-contain transition-all duration-500" />
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative overflow-hidden rounded-2xl border border-border/50 bg-white p-4 sm:p-10 flex items-center justify-center shadow-sm aspect-square lg:aspect-auto lg:h-[600px]">
+                <img src={activeImage} alt={name} className="max-h-full max-w-full object-contain transition-all duration-500 hover:scale-105" />
                 <button className="absolute top-6 right-6 h-10 w-10 bg-secondary rounded-full flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all shadow-sm">
                   <Box className="h-4 w-4" />
                 </button>
               </motion.div>
               {galleryImages.length > 1 && (
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 overflow-x-auto pb-2">
                   {galleryImages.map((img, i) => (
-                    <button key={i} onClick={() => setActiveImage(img)} className={`h-24 w-24 rounded-2xl border-2 p-2 bg-white flex items-center justify-center transition-all ${activeImage === img ? 'border-primary' : 'border-border/50 hover:border-primary/50'}`}>
+                    <button key={i} onClick={() => setActiveImage(img)} className={`h-20 w-20 sm:h-24 sm:w-24 shrink-0 rounded-2xl border-2 p-2 bg-white flex items-center justify-center transition-all ${activeImage === img ? 'border-primary' : 'border-border/50 hover:border-primary/50'}`}>
                       <img src={img} className="max-h-full max-w-full object-contain" alt="" />
                     </button>
                   ))}
@@ -147,7 +147,7 @@ const ProductDetail = () => {
             <div className="flex flex-col">
               <div className="mb-8 border-b border-border/50 pb-8">
                 <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-[10px] font-black tracking-widest uppercase mb-4 rounded-sm">{product.brand}</span>
-                <h1 className="text-3xl lg:text-5xl font-black uppercase tracking-tighter text-foreground leading-[1] mb-6">{name}</h1>
+                <h1 className="text-2xl sm:text-3xl lg:text-5xl font-black uppercase tracking-tighter text-foreground leading-[1] mb-6">{name}</h1>
                 <div className="flex items-center gap-6">
                   <div className="flex items-center gap-1 cursor-pointer" onClick={() => setActiveTab('reviews')}>
                     {[...Array(5)].map((_, i) => (<Star key={i} className={`h-3 w-3 ${i < Math.floor(product.rating || 0) ? 'fill-accent text-accent' : 'text-muted/30'}`} />))}
@@ -166,7 +166,7 @@ const ProductDetail = () => {
                   {product.originalPrice && product.originalPrice > product.price && (
                     <span className="text-xl text-muted-foreground line-through font-bold">{formatPrice(product.originalPrice)} {currency}</span>
                   )}
-                  <span className="text-5xl font-black text-primary italic tracking-tighter">{formatPrice(product.price)} <span className="text-xl font-bold not-italic">{currency}</span></span>
+                  <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-primary italic tracking-tighter">{formatPrice(product.price)} <span className="text-lg sm:text-xl font-bold not-italic">{currency}</span></span>
                   {/* Added category display here, assuming this was the intended placement */}
                   <span className="text-primary italic">{product.category?.name[language] || product.category_id}</span>
                 </div>
@@ -287,10 +287,10 @@ const ProductDetail = () => {
 
           {/* Related */}
           {related.length > 0 && (
-            <div className="mt-32 pt-16 border-t border-border/50">
-              <div className="flex items-end justify-between mb-12">
+            <div className="mt-16 sm:mt-24 lg:mt-32 pt-12 lg:pt-16 border-t border-border/50">
+              <div className="flex items-end justify-between mb-8 lg:mb-12">
                 <div>
-                  <h2 className="text-3xl font-black uppercase tracking-tighter text-foreground leading-[0.8] mb-4">
+                  <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-foreground leading-[0.8] mb-4">
                     {t('product.related')} <span className="text-primary italic">{t('product.relatedHighlight')}</span>
                   </h2>
                   <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">{t('product.relatedSubtitle')}</p>

@@ -7,7 +7,30 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\ReviewController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/storage-link', function () {
+    try {
+        $publicStoragePath = public_path('storage');
+        if (file_exists($publicStoragePath)) {
+            if (is_link($publicStoragePath)) {
+                return response()->json(['message' => 'The [public/storage] link already exists.', 'target' => readlink($publicStoragePath)]);
+            } else {
+                return response()->json(['message' => 'The [public/storage] exists but is NOT a link. Please delete it manually.'], 400);
+            }
+        }
+        
+        \Illuminate\Support\Facades\Artisan::call('storage:link');
+        return response()->json(['message' => 'The [public/storage] directory has been linked successfully.']);
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+    }
+});
+
+Route::get('/test-api', function() {
+    return response()->json(['status' => 'ok', 'message' => 'API is working']);
+});
+
 Route::post('/login', [AuthController::class, 'login']);
+
 
 Route::apiResource('products', ProductController::class);
 Route::get('/categories', [App\Http\Controllers\Api\CategoryController::class, 'index']);

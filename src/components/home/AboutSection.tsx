@@ -21,9 +21,9 @@ const AboutSection = () => {
   ];
 
   return (
-    <section id="about" className="py-20 bg-background overflow-hidden">
+    <section id="about" className="py-12 sm:py-20 bg-background overflow-hidden">
       <div className="container mx-auto px-4 lg:px-12">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -33,7 +33,7 @@ const AboutSection = () => {
             <div className="inline-block px-3 py-1 bg-primary/10 text-primary text-[10px] font-black tracking-widest uppercase mb-4 rounded-sm">
               {t('footer.about')}
             </div>
-            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter leading-tight mb-6">
+            <h2 className="text-2xl sm:text-3xl md:text-5xl font-black uppercase tracking-tighter leading-tight mb-6">
               Votre Partenaire <br />
               <span className="text-primary italic">Informatique au Maroc</span>
             </h2>

@@ -35,7 +35,7 @@ const TestimonialsSection = () => {
   if (reviews.length === 0) return null;
 
   return (
-    <section className="py-24 bg-[#0a0a0a] relative overflow-hidden">
+    <section className="py-14 sm:py-24 bg-[#0a0a0a] relative overflow-hidden">
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 opacity-30" />
       
       <div className="container relative z-10 px-4 md:px-12 mx-auto">
@@ -53,7 +53,7 @@ const TestimonialsSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-white leading-tight mb-4"
+            className="text-2xl sm:text-3xl md:text-5xl font-black uppercase tracking-tighter text-white leading-tight mb-4"
           >
             {t('testimonials.title')} <span className="text-primary italic">{t('testimonials.titleHighlight')}</span>
           </motion.h2>
@@ -76,7 +76,7 @@ const TestimonialsSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="bg-white/5 border border-white/10 rounded-3xl p-8 relative group hover:bg-white/10 transition-colors"
+              className="bg-white/5 border border-white/10 rounded-3xl p-5 sm:p-8 relative group hover:bg-white/10 transition-colors"
             >
               <Quote className="absolute top-8 right-8 h-12 w-12 text-white/5 group-hover:text-primary/10 transition-colors" />
               <div className="flex gap-1 mb-6">

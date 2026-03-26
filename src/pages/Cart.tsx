@@ -67,22 +67,22 @@ const Cart = () => {
         <div className="container mx-auto px-4 lg:px-12">
           <div className="flex items-center gap-4 mb-12">
             <div className="h-10 w-1 bg-primary rounded-full" />
-            <h1 className="text-4xl font-black uppercase tracking-tighter text-foreground leading-none">
+            <h1 className="text-2xl sm:text-4xl font-black uppercase tracking-tighter text-foreground leading-none">
               {t('cart.title')} <span className="text-primary italic">{t('cart.titleHighlight')}</span>
             </h1>
           </div>
 
           {orderPlaced ? (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-16 flex flex-col items-center text-center bg-white p-12 rounded-3xl shadow-xl border border-border/50 max-w-2xl mx-auto">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-10 sm:mt-16 flex flex-col items-center text-center bg-white p-8 sm:p-12 rounded-3xl shadow-xl border border-border/50 max-w-2xl mx-auto">
               <div className="h-24 w-24 rounded-full bg-success/10 flex items-center justify-center text-success mb-8"><CheckCircle2 className="h-12 w-12" /></div>
-              <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">{t('cart.orderConfirmed')}</h2>
+              <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tighter mb-4">{t('cart.orderConfirmed')}</h2>
               <p className="text-muted-foreground font-bold uppercase tracking-widest text-sm mb-10 leading-relaxed">{t('cart.orderConfirmedDesc')}</p>
               <Link to="/products" className="inline-flex items-center gap-3 bg-foreground text-background px-10 py-5 rounded-full text-xs font-black uppercase tracking-widest hover:bg-primary transition-all">
                 {t('cart.backToShop')}<ChevronRight className="h-4 w-4" />
               </Link>
             </motion.div>
           ) : items.length === 0 ? (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-16 flex flex-col items-center text-center bg-white p-20 rounded-3xl border border-dashed border-border">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-10 sm:mt-16 flex flex-col items-center text-center bg-white p-10 sm:p-20 rounded-3xl border border-dashed border-border">
               <div className="h-20 w-20 rounded-full bg-secondary flex items-center justify-center mb-8"><ShoppingBag className="h-10 w-10 text-muted-foreground/30" /></div>
               <p className="text-xl font-bold uppercase tracking-widest text-muted-foreground mb-8">{t('cart.empty')}</p>
               <Link to="/products" className="inline-flex items-center gap-4 bg-primary text-white px-10 py-5 rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-primary/20">

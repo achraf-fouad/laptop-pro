@@ -19,7 +19,7 @@ class Product extends Model
         'images', // JSON array of image paths
         'category_id',
         'brand',
-        'stock', // Integer
+        'stock_quantity', // Changed from 'stock' to match migration
         'stock_status', // Enum
         'rating',
         'review_count',
@@ -51,33 +51,49 @@ class Product extends Model
         'price' => 'float',
         'original_price' => 'float',
         'rating' => 'float',
-        'stock' => 'integer',
+        'stock_quantity' => 'integer',
     ];
 
     protected $appends = ['reviewCount', 'originalPrice'];
 
     public function getImagesAttribute($value)
     {
-        $images = is_string($value) ? json_decode($value, true) : $value;
-        $images = $images ?: [];
-        
         $baseUrl = config('app.url');
-        // If we are in local and using artisan serve, we might be on port 8000
-        if (app()->isLocal() && !str_contains($baseUrl, ':8000')) {
-            $baseUrl = 'http://localhost:8000';
-        }
+        
+        // Ensure $images is an array
+        $images = is_string($value) ? json_decode($value, true) : $value;
+        if (!is_array($images)) $images = [];
 
         return array_map(function($image) use ($baseUrl) {
             if (!$image) return '';
+            
+            // Clean up any old localhost links that might be in the database
+            if (str_contains($image, 'localhost:8000')) {
+                $image = str_replace(['http://localhost:8000/', 'http://localhost:8000'], '', $image);
+            }
+
             if (str_starts_with($image, 'http')) {
                 return $image;
             }
-            return rtrim($baseUrl, '/') . '/' . ltrim($image, '/');
+
+            // More robust path joining for cPanel
+            $path = ltrim($image, '/');
+            
+            // If the path doesn't start with 'storage/', and we are in production, 
+            // maybe it was saved without it. But usually Laravel saves as 'products/xxx.jpg'
+            // and we expect it to be served via 'storage/products/xxx.jpg'
+            if (!str_starts_with($path, 'storage/') && !str_starts_with($path, 'public/')) {
+                $path = 'storage/' . $path;
+            }
+
+            return rtrim($baseUrl, '/') . '/' . $path;
         }, $images);
     }
 
+
     public function getReviewCountAttribute()
     {
+        // Safe access to attributes array to avoid recursion and 500 errors if column is missing from query
         return $this->attributes['review_count'] ?? 0;
     }
 

@@ -175,7 +175,7 @@ const Products = () => {
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-              <h1 className="text-4xl font-black uppercase tracking-tighter text-foreground leading-none">
+              <h1 className="text-2xl sm:text-4xl font-black uppercase tracking-tighter text-foreground leading-none">
                 {searchParam ? (
                   <>Results for <span className="text-primary italic">"{searchParam}"</span></>
                 ) : (
@@ -187,7 +187,7 @@ const Products = () => {
               </p>
             </div>
 
-            <div className="flex items-center gap-4 border-t md:border-t-0 pt-4 md:pt-0">
+            <div className="flex flex-wrap items-center gap-3 border-t md:border-t-0 pt-4 md:pt-0">
               <div className="flex bg-secondary/50 p-1 rounded-lg">
                 <button onClick={() => setViewMode('grid')} className={`p-2 rounded-md transition-all ${viewMode === 'grid' ? 'bg-white shadow-sm text-primary' : 'text-muted-foreground'}`}>
                   <LayoutGrid className="h-4 w-4" />

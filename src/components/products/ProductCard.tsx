@@ -97,7 +97,7 @@ const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(({ product, ind
             <button
               onClick={() => addToCart(product)}
               disabled={product.stock_status === 'out_of_stock'}
-              className="flex items-center justify-center gap-2 rounded-full bg-secondary py-2.5 text-[8px] sm:text-[9px] font-black uppercase tracking-wide text-foreground transition-all hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed group/btn whitespace-nowrap px-1"
+              className="flex items-center justify-center gap-2 rounded-full bg-secondary py-2.5 text-[10px] sm:text-[9px] font-black uppercase tracking-wide text-foreground transition-all hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed group/btn whitespace-nowrap px-1"
             >
               <ShoppingCart className="h-3 w-3 transition-transform group-hover/btn:-rotate-12" />
               <span>{t('featured.addToCart')}</span>
@@ -105,7 +105,7 @@ const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(({ product, ind
             <button
               onClick={handleQuickBuy}
               disabled={product.stock_status === 'out_of_stock'}
-              className="flex items-center justify-center gap-2 rounded-full bg-primary text-white py-2.5 text-[8px] sm:text-[9px] font-black uppercase tracking-wide transition-all hover:bg-primary/90 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap px-1"
+              className="flex items-center justify-center gap-2 rounded-full bg-primary text-white py-2.5 text-[10px] sm:text-[9px] font-black uppercase tracking-wide transition-all hover:bg-primary/90 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap px-1"
             >
               <Zap className="h-3 w-3 fill-current" />
               <span>{t('product.quickBuy')}</span>

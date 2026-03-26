@@ -42,13 +42,13 @@ const ContactSection = () => {
   };
 
   const infoItems = [
-    { icon: Phone, label: t('contact.phone'), value: '+212 6 00 00 00 00' },
-    { icon: Mail, label: t('contact.email'), value: 'contact@maroclaptop.ma' },
+    { icon: Phone, label: t('contact.phone'), value: '+212 644-459980' },
+    { icon: Mail, label: t('contact.email'), value: 'contact@MarocLaptop.com' },
     { icon: MapPin, label: t('contact.address'), value: t('contact.addressValue') },
   ];
 
   return (
-    <section id="contact" className="bg-secondary/30 py-16 lg:py-24">
+    <section id="contact" className="bg-secondary/30 py-12 sm:py-16 lg:py-24">
       <div className="container mx-auto px-4 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -64,7 +64,7 @@ const ContactSection = () => {
           </p>
         </motion.div>
 
-        <div className="mt-12 grid gap-10 lg:grid-cols-5">
+        <div className="mt-10 sm:mt-12 grid gap-8 lg:gap-10 grid-cols-1 lg:grid-cols-5">
           {/* Info */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}

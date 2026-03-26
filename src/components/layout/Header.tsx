@@ -79,16 +79,16 @@ const Header = () => {
       >
         {/* Main Header */}
         <div className="border-b border-border">
-          <div className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-8 gap-2 lg:gap-8">
-            <Link to="/" className="group flex items-center gap-2.5 shrink-0">
-              <div className="flex h-10 w-10 md:h-12 md:w-12 items-center justify-center bg-primary rounded-xl shadow-lg shadow-primary/20">
-                <span className="text-xl md:text-2xl font-black italic text-white flex items-center justify-center">ML</span>
+          <div className="container mx-auto flex h-14 sm:h-16 md:h-20 items-center justify-between px-3 md:px-8 gap-1.5 lg:gap-8">
+            <Link to="/" className="group flex items-center gap-2 sm:gap-1.5 md:gap-2.5 shrink-0">
+              <div className="flex h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 items-center justify-center bg-primary rounded-lg md:rounded-xl shadow-lg shadow-primary/20">
+                <span className="text-sm sm:text-lg md:text-2xl font-black italic text-white flex items-center justify-center">ML</span>
               </div>
-              <div className="flex flex-col hidden sm:flex">
-                <span className="text-lg md:text-2xl font-black uppercase tracking-tighter">
+              <div className="hidden sm:flex flex-col">
+                <span className="text-base md:text-2xl font-black uppercase tracking-tighter">
                   Maroc <span className="text-primary italic">Laptop</span>
                 </span>
-                <span className="hidden text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground md:block">
+                <span className="hidden md:block text-[8px] md:text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
                   High-End Solutions
                 </span>
               </div>
@@ -99,6 +99,7 @@ const Header = () => {
                 onSubmit={handleSearch}
                 className={`flex flex-1 items-center rounded-full bg-secondary/80 border transition-all duration-200 px-4 py-1 ${isSearchFocused ? 'border-primary ring-4 ring-primary/10' : 'border-transparent'}`}
               >
+
                 <Search className="h-4 w-4 text-muted-foreground mr-3" />
                 <input 
                   type="text"

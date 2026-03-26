@@ -57,7 +57,7 @@ const CategoriesSection = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 grid-rows-none lg:grid-rows-2 gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 grid-rows-none lg:grid-rows-2 gap-4 lg:gap-6">
           {mainCategories.map((cat, idx) => (
             <motion.div
               key={cat.id}
@@ -65,15 +65,15 @@ const CategoriesSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1, duration: 0.5 }}
-              className={`group relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 ${cat.span}`}
+              className={`group relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 min-h-[180px] sm:min-h-[220px] lg:min-h-0 ${cat.span}`}
             >
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-all duration-500 z-10" />
               <img src={cat.image} alt={cat.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-              <div className="absolute inset-0 z-20 p-8 flex flex-col justify-end">
+              <div className="absolute inset-0 z-20 p-4 sm:p-6 lg:p-8 flex flex-col justify-end">
                 <span className="text-[10px] font-black uppercase tracking-widest text-primary mb-2 opacity-0 -translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                   {cat.subtitle}
                 </span>
-                <h3 className="text-2xl font-black text-white uppercase tracking-tighter translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                <h3 className="text-lg sm:text-xl lg:text-2xl font-black text-white uppercase tracking-tighter translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                   {cat.title}
                 </h3>
                 <Link

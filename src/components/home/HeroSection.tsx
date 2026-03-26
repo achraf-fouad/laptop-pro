@@ -39,7 +39,7 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section className="relative h-[480px] lg:h-[600px] overflow-hidden bg-[#111]">
+    <section className="relative h-[380px] sm:h-[480px] lg:h-[600px] overflow-hidden bg-[#111]">
       <AnimatePresence mode="wait">
         <motion.div
           key={current}
@@ -65,17 +65,17 @@ const HeroSection = () => {
             <span className="inline-block px-3 py-1 bg-primary text-[10px] font-black tracking-widest uppercase mb-4 rounded-sm">
               {slides[current].tag}
             </span>
-            <h1 className="text-3xl md:text-5xl lg:text-7xl font-black uppercase tracking-tighter leading-[1] md:leading-[0.9] mb-4">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-black uppercase tracking-tighter leading-[1] md:leading-[0.9] mb-3 md:mb-4">
               {slides[current].title} <br />
               <span className="text-primary italic">{slides[current].subtitle}</span>
             </h1>
-            <p className="text-xs md:text-base lg:text-lg text-white/70 font-medium uppercase tracking-wide max-w-lg mb-8">
+            <p className="text-xs md:text-base lg:text-lg text-white/70 font-medium uppercase tracking-wide max-w-lg mb-5 md:mb-8">
               {slides[current].description}
             </p>
             <div className="flex items-center gap-4">
               <Link
                 to={slides[current].link}
-                className={`${slides[current].btnColor} text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-widest hover:scale-110 transition-transform shadow-lg shadow-primary/20 flex items-center gap-2`}
+                className={`${slides[current].btnColor} text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold text-xs sm:text-sm uppercase tracking-widest hover:scale-110 transition-transform shadow-lg shadow-primary/20 flex items-center gap-2`}
               >
                 {slides[current].cta}
                 <ArrowRight className="h-4 w-4" />

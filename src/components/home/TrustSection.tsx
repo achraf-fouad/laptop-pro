@@ -13,9 +13,9 @@ const TrustSection = () => {
   ];
 
   return (
-    <section className="py-20 lg:py-32 border-t border-border/50 bg-white">
+    <section className="py-12 sm:py-20 lg:py-32 border-t border-border/50 bg-white">
       <div className="container mx-auto px-4 lg:px-12">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 sm:gap-8 lg:gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {items.map((item, i) => (
             <motion.div
               key={i}
@@ -23,9 +23,9 @@ const TrustSection = () => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="flex items-center gap-6 group hover:translate-x-2 transition-transform duration-300"
+              className="flex items-center gap-4 group hover:translate-x-2 transition-transform duration-300"
             >
-              <div className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-secondary/50 transition-all duration-300 group-hover:bg-primary group-hover:shadow-xl group-hover:shadow-primary/20 ${item.color}`}>
+              <div className={`flex h-12 w-12 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-2xl bg-secondary/50 transition-all duration-300 group-hover:bg-primary group-hover:shadow-xl group-hover:shadow-primary/20 ${item.color}`}>
                 <item.icon className="h-7 w-7 transition-colors group-hover:text-white" />
               </div>
               <div className="flex flex-col">

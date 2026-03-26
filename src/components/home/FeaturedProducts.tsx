@@ -44,22 +44,22 @@ const FeaturedProducts = () => {
   ];
 
   return (
-    <section className="bg-secondary/30 py-16 lg:py-24">
+    <section className="bg-secondary/30 py-12 sm:py-16 lg:py-24">
       <div className="container mx-auto px-4 lg:px-12">
         <div className="flex flex-col lg:flex-row items-baseline justify-between gap-6 mb-12">
           <div>
-            <h2 className="text-3xl font-black uppercase tracking-tighter text-foreground leading-[0.8] mb-4">
+            <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-foreground leading-[0.8] mb-4">
               {t('featured.title')} <span className="text-primary italic">{t('featured.titleHighlight')}</span>
             </h2>
             <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">{t('featured.subtitle')}</p>
           </div>
           
-          <div className="flex bg-card p-1 rounded-full border border-border/50 shadow-sm overflow-hidden">
+          <div className="flex flex-wrap bg-card p-1 rounded-full border border-border/50 shadow-sm overflow-hidden gap-1">
             {tabs.map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-full ${activeTab === tab.id ? 'bg-primary text-white shadow-md' : 'text-muted-foreground hover:text-foreground'}`}
+                className={`px-4 sm:px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-full ${activeTab === tab.id ? 'bg-primary text-white shadow-md' : 'text-muted-foreground hover:text-foreground'}`}
               >
                 {tab.label}
               </button>
@@ -84,7 +84,7 @@ const FeaturedProducts = () => {
         <div className="mt-16 flex justify-center">
           <Link
             to="/products"
-            className="group flex items-center gap-4 bg-foreground text-background px-10 py-5 rounded-full text-xs font-black uppercase tracking-[0.2em] hover:bg-primary transition-all shadow-xl hover:-translate-y-1"
+            className="group flex items-center gap-3 bg-foreground text-background px-6 sm:px-10 py-4 sm:py-5 rounded-full text-xs font-black uppercase tracking-[0.2em] hover:bg-primary transition-all shadow-xl hover:-translate-y-1"
           >
             {t('featured.viewAll')}
             <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-2" />

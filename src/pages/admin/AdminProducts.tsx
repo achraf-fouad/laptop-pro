@@ -26,7 +26,7 @@ interface Product {
   category?: Category;
   brand: string;
   images: string[];
-  stock: number;
+  stock_quantity: number;
   stock_status: string;
   specs?: Record<string, string>;
 }
@@ -87,7 +87,7 @@ const AdminProducts = () => {
   const handleDelete = async (id: number) => {
     if (!confirm('Voulez-vous vraiment supprimer ce produit ?')) return;
     try {
-      await api.delete(`/products/${id}`);
+      await api.post(`/products/${id}`, { _method: 'DELETE' });
       toast.success('Produit supprimé');
       fetchData();
     } catch (error) {
@@ -141,7 +141,7 @@ const AdminProducts = () => {
         formData.append('original_price', String(editingProduct.original_price));
       }
       formData.append('category_id', String(editingProduct.category_id || ''));
-      formData.append('stock', String(editingProduct.stock || 0));
+      formData.append('stock_quantity', String(editingProduct.stock_quantity || 0));
       formData.append('stock_status', editingProduct.stock_status || 'in_stock');
       formData.append('brand', editingProduct.brand || '');
 
@@ -181,7 +181,16 @@ const AdminProducts = () => {
       fetchData();
     } catch (error: any) {
       console.error(error);
-      const message = error.response?.data?.message || 'Erreur lors de l\'enregistrement';
+      let message = error.response?.data?.message || 'Erreur lors de l\'enregistrement';
+      
+      // Extract specific validation errors if present
+      if (error.response?.data?.errors) {
+        const fieldErrors = Object.values(error.response.data.errors)
+          .map((errList: any) => errList[0])
+          .join('\n');
+        message = fieldErrors || message;
+      }
+      
       toast.error(message);
     }
   };
@@ -195,7 +204,7 @@ const AdminProducts = () => {
       category_id: categories.length > 0 ? categories[0].id : 0,
       brand: '',
       images: [],
-      stock: 0,
+      stock_quantity: 0,
       stock_status: 'in_stock'
     });
     setSelectedFiles([]);
@@ -217,20 +226,20 @@ const AdminProducts = () => {
   );
 
   return (
-    <div className="p-8 space-y-10">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-8 lg:space-y-10">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
         <div>
-          <h2 className="text-3xl font-black uppercase tracking-tighter text-foreground leading-[1] mb-2 italic">Gestion <span className="text-primary">Produits</span></h2>
+          <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-foreground leading-[1] mb-2 italic">Gestion <span className="text-primary text-3xl sm:text-4xl lg:text-5xl">Produits</span></h2>
           <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">GÉREZ VOTRE CATALOGUE ET VOS STOCKS</p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button variant="outline" className="h-12 rounded-xl bg-white border-border/50 text-[10px] font-black uppercase tracking-widest gap-2 shadow-sm">
-            <Download className="h-4 w-4" />
-            Exporter
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+          <Button variant="outline" className="h-10 sm:h-12 px-3 sm:px-4 rounded-xl bg-white border-border/50 text-[9px] sm:text-[10px] font-black uppercase tracking-widest gap-2 shadow-sm">
+            <Download className="h-3.5 w-3.5 sm:h-4 w-4" />
+            <span className="hidden sm:inline">Exporter</span>
           </Button>
-          <Button onClick={openAddDialog} className="h-12 rounded-xl bg-primary text-white text-[10px] font-black uppercase tracking-widest gap-2 shadow-xl shadow-primary/20 hover:scale-105 transition-all">
-            <Plus className="h-5 w-5" />
-            Ajouter un Produit
+          <Button onClick={openAddDialog} className="flex-1 sm:flex-none h-10 sm:h-12 px-4 sm:px-6 rounded-xl bg-primary text-white text-[9px] sm:text-[10px] font-black uppercase tracking-widest gap-2 shadow-xl shadow-primary/20 hover:scale-[1.03] transition-all">
+            <Plus className="h-4 w-4 sm:h-5 w-5" />
+            <span className="whitespace-nowrap">Ajouter un Produit</span>
           </Button>
         </div>
       </div>
@@ -276,7 +285,7 @@ const AdminProducts = () => {
                 <tr key={p.id} className="hover:bg-secondary/10 transition-colors group">
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-xl bg-secondary/50 border border-border/20 p-2 flex items-center justify-center shrink-0">
+                      <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-secondary/50 border border-border/20 p-1.5 sm:p-2 flex items-center justify-center shrink-0">
                         {p.images && p.images.length > 0 ? (
                           <img src={p.images[0]} alt="" className="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-500" />
                         ) : (
@@ -303,13 +312,13 @@ const AdminProducts = () => {
                   <td className="px-8 py-5">
                     <StatusBadge status={p.stock_status} />
                   </td>
-                  <td className="px-8 py-5 text-end">
-                    <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => openEditDialog(p)} className="h-9 w-9 flex items-center justify-center rounded-lg bg-secondary text-muted-foreground hover:bg-primary hover:text-white transition-all">
-                        <Pencil className="h-4 w-4" />
+                  <td className="px-4 sm:px-8 py-5 text-end">
+                    <div className="flex items-center justify-end gap-1.5 sm:gap-2 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                      <button onClick={() => openEditDialog(p)} className="h-8 w-8 sm:h-9 sm:w-9 flex items-center justify-center rounded-lg bg-secondary text-muted-foreground hover:bg-primary hover:text-white transition-all shadow-sm">
+                        <Pencil className="h-3.5 w-3.5 sm:h-4 w-4" />
                       </button>
-                      <button onClick={() => handleDelete(p.id)} className="h-9 w-9 flex items-center justify-center rounded-lg bg-secondary text-muted-foreground hover:bg-destructive hover:text-white transition-all">
-                        <Trash2 className="h-4 w-4" />
+                      <button onClick={() => handleDelete(p.id)} className="h-8 w-8 sm:h-9 sm:w-9 flex items-center justify-center rounded-lg bg-secondary text-muted-foreground hover:bg-destructive hover:text-white transition-all shadow-sm">
+                        <Trash2 className="h-3.5 w-3.5 sm:h-4 w-4" />
                       </button>
                     </div>
                   </td>
@@ -389,8 +398,8 @@ const AdminProducts = () => {
                 <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Quantité en Stock</Label>
                 <Input
                   type="number"
-                  value={editingProduct?.stock || 0}
-                  onChange={e => setEditingProduct({ ...editingProduct, stock: parseInt(e.target.value) })}
+                  value={editingProduct?.stock_quantity || 0}
+                  onChange={e => setEditingProduct({ ...editingProduct, stock_quantity: parseInt(e.target.value) })}
                   className="h-12 rounded-xl bg-secondary/30 border-none font-bold"
                 />
               </div>

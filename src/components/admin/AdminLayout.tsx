@@ -157,7 +157,7 @@ const AdminLayout = () => {
       {/* Main content */}
       <div className="flex flex-1 flex-col overflow-hidden relative">
         {/* Top bar */}
-        <header className="flex h-20 items-center justify-between bg-white px-6 md:px-10 border-b border-border/50 sticky top-0 z-40">
+        <header className="flex h-16 md:h-20 items-center justify-between bg-white px-4 md:px-10 border-b border-border/50 sticky top-0 z-40 transition-all">
           <div className="flex items-center gap-6">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -165,7 +165,7 @@ const AdminLayout = () => {
             >
               <Menu className="h-5 w-5" />
             </button>
-            <h1 className="md:hidden font-black uppercase tracking-tighter text-xl italic">
+            <h1 className="md:hidden font-black uppercase tracking-tighter text-lg italic truncate max-w-[150px]">
               Dashboard
             </h1>
           </div>

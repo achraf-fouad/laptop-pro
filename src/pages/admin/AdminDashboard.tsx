@@ -88,10 +88,10 @@ const AdminDashboard = () => {
   );
 
   return (
-    <div className="p-8 space-y-10">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-8 lg:space-y-10">
       <div className="flex items-center justify-between">
          <div>
-            <h2 className="text-3xl font-black uppercase tracking-tighter text-foreground leading-[1] mb-2 italic">Aperçu <span className="text-primary">Général</span></h2>
+            <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-foreground leading-[1] mb-2 italic">Aperçu <span className="text-primary text-3xl sm:text-4xl lg:text-5xl">Général</span></h2>
             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">PERFORMANCE DE VOTRE ACTIVITÉ EN TEMPS RÉEL</p>
          </div>
          <div className="flex items-center gap-3">
@@ -111,7 +111,7 @@ const AdminDashboard = () => {
       {/* Stat cards */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((s) => (
-          <div key={s.label} className="group relative overflow-hidden rounded-3xl border border-border/40 bg-white p-8 shadow-sm hover:shadow-xl transition-all duration-300">
+          <div key={s.label} className="group relative overflow-hidden rounded-3xl border border-border/40 bg-white p-5 sm:p-8 shadow-sm hover:shadow-xl transition-all duration-300">
             <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-secondary/30 scale-150 transition-transform group-hover:scale-110" />
             <div className="relative z-10">
                 <div className="flex items-center justify-between mb-6">
@@ -285,7 +285,7 @@ const AdminDashboard = () => {
                   </td>
                   <td className="px-8 py-5 text-end">
                     {o.status === 'pending' ? (
-                      <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex justify-end gap-2 sm:gap-3 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                         <button 
                           onClick={() => handleOrderAction(o.id, 'confirm')} 
                           className="px-3 py-1.5 bg-success text-white rounded-lg text-[9px] font-black uppercase tracking-widest shadow-lg shadow-success/10 hover:scale-110 transition-transform"

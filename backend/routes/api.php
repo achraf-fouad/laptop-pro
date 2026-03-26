@@ -32,7 +32,8 @@ Route::get('/test-api', function() {
 Route::post('/login', [AuthController::class, 'login']);
 
 
-Route::apiResource('products', ProductController::class);
+Route::get('/products', [ProductController::class, 'index']);
+Route::get('/products/{product}', [ProductController::class, 'show']);
 Route::get('/categories', [App\Http\Controllers\Api\CategoryController::class, 'index']);
 Route::post('/orders', [OrderController::class, 'store']); // Public checkout
 Route::post('/products/{product}/reviews', [ReviewController::class, 'store']); // Public review submission
@@ -41,6 +42,10 @@ Route::get('/reviews/featured', [ReviewController::class, 'featured']); // Get f
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
+
+    Route::post('/products', [ProductController::class, 'store']);
+    Route::put('/products/{product}', [ProductController::class, 'update']);
+    Route::delete('/products/{product}', [ProductController::class, 'destroy']);
 
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
     Route::get('/dashboard/sales-graph', [DashboardController::class, 'salesGraph']);

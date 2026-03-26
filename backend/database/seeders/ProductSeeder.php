@@ -240,8 +240,8 @@ class ProductSeeder extends Seeder
             }
 
             // Add default stock if missing
-            if (!isset($productData['stock'])) {
-                $productData['stock'] = 10;
+            if (!isset($productData['stock_quantity'])) {
+                $productData['stock_quantity'] = 10;
             }
 
             // Find category by old string name mapping

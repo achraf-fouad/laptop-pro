@@ -71,7 +71,12 @@ const AdminOrders = () => {
   });
 
   return (
-    <div className="space-y-4">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-8">
+      <div>
+        <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-foreground leading-[1] mb-2 italic">Gestion <span className="text-primary text-3xl sm:text-4xl lg:text-5xl">Commandes</span></h2>
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">GÉREZ LES ACHATS ET LE SUIVI CLIENTS</p>
+      </div>
+      <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
           <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -221,6 +226,7 @@ const AdminOrders = () => {
           )}
         </DialogContent>
       </Dialog>
+    </div>
     </div>
   );
 };

@@ -166,14 +166,10 @@ const AdminProducts = () => {
 
       if (editingProduct.id) {
         formData.append('_method', 'PUT');
-        await api.post(`/products/${editingProduct.id}`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
+        await api.post(`/products/${editingProduct.id}`, formData);
         toast.success('Produit mis à jour');
       } else {
-        await api.post('/products', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
+        await api.post('/products', formData);
         toast.success('Produit créé avec succès');
       }
       setIsDialogOpen(false);

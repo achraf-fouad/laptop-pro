@@ -79,7 +79,7 @@ const Header = () => {
       >
         {/* Main Header */}
         <div className="border-b border-border">
-          <div className="container mx-auto flex h-14 sm:h-16 md:h-20 items-center justify-between px-3 md:px-8 gap-1.5 lg:gap-8">
+          <div className="container mx-auto flex h-14 sm:h-16 md:h-20 items-center justify-between px-5 sm:px-6 md:px-8 gap-1.5 lg:gap-8">
             <Link to="/" className="group flex items-center gap-2 sm:gap-1.5 md:gap-2.5 shrink-0">
               <div className="flex h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 items-center justify-center bg-primary rounded-lg md:rounded-xl shadow-lg shadow-primary/20">
                 <span className="text-sm sm:text-lg md:text-2xl font-black italic text-white flex items-center justify-center">ML</span>

@@ -58,21 +58,21 @@ const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(({ product, ind
         )}
       </div>
 
-      <Link to={`/product/${product.id}`} className="block relative aspect-square overflow-hidden bg-[#fcfcfc] flex items-center justify-center p-6">
+      <Link to={`/product/${product.id}`} className="block relative aspect-square overflow-hidden bg-[#fcfcfc] flex items-center justify-center p-3 sm:p-6">
         <img src={product.images && product.images.length > 0 ? product.images[0] : ''} alt={name} className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-110" loading="lazy" />
-        <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-2 z-10">
+        <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 items-center justify-center gap-2 z-10 hidden sm:flex">
           <div className="h-10 w-10 bg-white rounded-full flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all shadow-lg translate-y-4 group-hover:translate-y-0 duration-300">
             <Eye className="h-4 w-4" />
           </div>
         </div>
       </Link>
 
-      <div className="flex flex-1 flex-col p-4 pt-2 border-t border-border/30">
-        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">
+      <div className="flex flex-1 flex-col p-3 sm:p-4 pt-2 border-t border-border/30">
+        <p className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1 leading-none">
           {product.category?.name[language] || t('product.informatique')}
         </p>
         <Link to={`/product/${product.id}`} className="flex-1">
-          <h3 className="text-sm font-bold text-foreground leading-tight line-clamp-2 hover:text-primary transition-colors min-h-[2.5rem] mb-2 uppercase">
+          <h3 className="text-xs sm:text-sm font-bold text-foreground leading-tight line-clamp-2 hover:text-primary transition-colors min-h-[2.5rem] mb-1.5 uppercase tracking-tighter sm:tracking-normal">
             {name}
           </h3>
         </Link>
@@ -93,22 +93,22 @@ const ProductCard = forwardRef<HTMLDivElement, ProductCardProps>(({ product, ind
               {formatPrice(product.price)} <span className="text-xs font-bold not-italic">{currency}</span>
             </span>
           </div>
-          <div className="grid grid-cols-1 gap-2">
+          <div className="grid grid-cols-1 gap-1 sm:gap-2">
             <button
               onClick={() => addToCart(product)}
               disabled={product.stock_status === 'out_of_stock'}
-              className="flex items-center justify-center gap-2 rounded-full bg-secondary py-2.5 text-[10px] sm:text-[9px] font-black uppercase tracking-wide text-foreground transition-all hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed group/btn whitespace-nowrap px-1"
+              className="flex items-center justify-center gap-1 sm:gap-2 rounded-full bg-secondary py-2 sm:py-2.5 text-[9px] sm:text-[10px] font-black uppercase tracking-wide text-foreground transition-all hover:bg-primary hover:text-white disabled:opacity-50 disabled:cursor-not-allowed group/btn whitespace-nowrap px-2"
             >
-              <ShoppingCart className="h-3 w-3 transition-transform group-hover/btn:-rotate-12" />
-              <span>{t('featured.addToCart')}</span>
+              <ShoppingCart className="h-2.5 w-2.5 sm:h-3 sm:w-3 transition-transform group-hover/btn:-rotate-12" />
+              <span className="truncate">{t('featured.addToCart')}</span>
             </button>
             <button
               onClick={handleQuickBuy}
               disabled={product.stock_status === 'out_of_stock'}
-              className="flex items-center justify-center gap-2 rounded-full bg-primary text-white py-2.5 text-[10px] sm:text-[9px] font-black uppercase tracking-wide transition-all hover:bg-primary/90 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap px-1"
+              className="flex items-center justify-center gap-1 sm:gap-2 rounded-full bg-primary text-white py-2 sm:py-2.5 text-[9px] sm:text-[10px] font-black uppercase tracking-wide transition-all hover:bg-primary/90 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap px-2"
             >
-              <Zap className="h-3 w-3 fill-current" />
-              <span>{t('product.quickBuy')}</span>
+              <Zap className="h-2.5 w-2.5 sm:h-3 sm:w-3 fill-current" />
+              <span className="truncate">{t('product.quickBuy')}</span>
             </button>
           </div>
           <div className="mt-2 flex items-center justify-between text-[8px] font-black uppercase tracking-wider">

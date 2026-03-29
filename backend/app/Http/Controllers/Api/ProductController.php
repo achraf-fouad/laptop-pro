@@ -22,7 +22,7 @@ class ProductController extends Controller
             'original_price' => 'nullable|numeric',
             'category_id' => 'nullable|integer|exists:categories,id',
             'brand' => 'nullable|string',
-            'stock_quantity' => 'required|integer',
+            'stock' => 'required|integer',
             'stock_status' => 'required|string|in:in_stock,low_stock,out_of_stock',
             'images' => 'nullable|array|max:10',
             'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048', // 2MB max
@@ -36,7 +36,7 @@ class ProductController extends Controller
             foreach ($request->file('images') as $image) {
                 $filename = uniqid() . '_' . time() . '.' . $image->getClientOriginalExtension();
                 $path = $image->storeAs('products', $filename, 'public');
-                $imagePaths[] = url('storage/' . $path);
+                $imagePaths[] = $path;
             }
         }
 
@@ -66,7 +66,7 @@ class ProductController extends Controller
             'original_price' => 'nullable|numeric',
             'category_id' => 'nullable|integer|exists:categories,id',
             'brand' => 'nullable|string',
-            'stock_quantity' => 'nullable|integer',
+            'stock' => 'nullable|integer',
             'stock_status' => 'nullable|string|in:in_stock,low_stock,out_of_stock',
             'images' => 'nullable|array|max:10',
             'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
@@ -84,7 +84,7 @@ class ProductController extends Controller
                     break;
                 $filename = uniqid() . '_' . time() . '.' . $image->getClientOriginalExtension();
                 $path = $image->storeAs('products', $filename, 'public');
-                $imagePaths[] = url('storage/' . $path);
+                $imagePaths[] = $path;
             }
         }
 

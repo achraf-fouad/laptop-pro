@@ -57,7 +57,7 @@ const CategoriesSection = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 grid-rows-none lg:grid-rows-2 gap-4 lg:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 grid-rows-none lg:grid-rows-2 gap-3 lg:gap-6">
           {mainCategories.map((cat, idx) => (
             <motion.div
               key={cat.id}

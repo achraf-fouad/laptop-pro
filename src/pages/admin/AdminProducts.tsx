@@ -26,7 +26,7 @@ interface Product {
   category?: Category;
   brand: string;
   images: string[];
-  stock_quantity: number;
+  stock: number;
   stock_status: string;
   specs?: Record<string, string>;
 }
@@ -141,7 +141,7 @@ const AdminProducts = () => {
         formData.append('original_price', String(editingProduct.original_price));
       }
       formData.append('category_id', String(editingProduct.category_id || ''));
-      formData.append('stock_quantity', String(editingProduct.stock_quantity || 0));
+      formData.append('stock', String(editingProduct.stock || 0));
       formData.append('stock_status', editingProduct.stock_status || 'in_stock');
       formData.append('brand', editingProduct.brand || '');
 
@@ -204,7 +204,7 @@ const AdminProducts = () => {
       category_id: categories.length > 0 ? categories[0].id : 0,
       brand: '',
       images: [],
-      stock_quantity: 0,
+      stock: 0,
       stock_status: 'in_stock'
     });
     setSelectedFiles([]);
@@ -398,8 +398,8 @@ const AdminProducts = () => {
                 <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Quantité en Stock</Label>
                 <Input
                   type="number"
-                  value={editingProduct?.stock_quantity || 0}
-                  onChange={e => setEditingProduct({ ...editingProduct, stock_quantity: parseInt(e.target.value) })}
+                  value={editingProduct?.stock || 0}
+                  onChange={e => setEditingProduct({ ...editingProduct, stock: parseInt(e.target.value) })}
                   className="h-12 rounded-xl bg-secondary/30 border-none font-bold"
                 />
               </div>

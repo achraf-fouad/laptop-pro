@@ -19,7 +19,7 @@ class Product extends Model
         'images', // JSON array of image paths
         'category_id',
         'brand',
-        'stock_quantity', // Changed from 'stock' to match migration
+        'stock', // Match migration
         'stock_status', // Enum
         'rating',
         'review_count',
@@ -51,7 +51,7 @@ class Product extends Model
         'price' => 'float',
         'original_price' => 'float',
         'rating' => 'float',
-        'stock_quantity' => 'integer',
+        'stock' => 'integer',
     ];
 
     protected $appends = ['reviewCount', 'originalPrice'];
@@ -67,22 +67,22 @@ class Product extends Model
         return array_map(function($image) use ($baseUrl) {
             if (!$image) return '';
             
-            // Clean up any old localhost links that might be in the database
-            if (str_contains($image, 'localhost:8000')) {
-                $image = str_replace(['http://localhost:8000/', 'http://localhost:8000'], '', $image);
+            // Comprehensive cleanup: Strip ANY http/https and domain/port info to get pure relative path
+            // This handles cases like: http://localhost:8000/storage/..., https://maroclaptop.com/storage/..., etc.
+            $path = $image;
+            if (str_starts_with($path, 'http')) {
+                // Deconstruct URL to get path only
+                $parsed = parse_url($path);
+                $path = $parsed['path'] ?? $path;
             }
 
-            if (str_starts_with($image, 'http')) {
-                return $image;
-            }
-
-            // More robust path joining for cPanel
-            $path = ltrim($image, '/');
+            // More robust path joining
+            $path = ltrim($path, '/');
             
-            // If the path doesn't start with 'storage/', and we are in production, 
-            // maybe it was saved without it. But usually Laravel saves as 'products/xxx.jpg'
-            // and we expect it to be served via 'storage/products/xxx.jpg'
+            // Common Laravel path normalization
             if (!str_starts_with($path, 'storage/') && !str_starts_with($path, 'public/')) {
+                // If it doesn't start with storage/, maybe it's just 'products/xxx.jpg'
+                // But check if it was 'storage/products/xxx.jpg' previously
                 $path = 'storage/' . $path;
             }
 

@@ -72,7 +72,7 @@ const FeaturedProducts = () => {
             <RefreshCw className="h-10 w-10 animate-spin text-primary opacity-20" />
           </div>
         ) : (
-          <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div layout className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             <AnimatePresence mode="popLayout">
               {filtered.map((product, i) => (
                 <ProductCard key={`${activeTab}-${product.id}`} product={product} index={i} />

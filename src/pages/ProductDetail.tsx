@@ -1,10 +1,11 @@
+
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useCart } from '@/contexts/CartContext';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/products/ProductCard';
-import { ShoppingCart, Star, ChevronRight, Check, XCircle, RefreshCw, Shield, Truck, RotateCcw, Box, Home, Send, User } from 'lucide-react';
+import { ShoppingCart, Star, ChevronRight, Check, XCircle, RefreshCw, Shield, Truck, RotateCcw, Box, Home, Send, User, Zap } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/lib/api';
@@ -110,7 +111,7 @@ const ProductDetail = () => {
   const galleryImages = product.images || [];
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#fcfcfc]">
+    <div className="flex min-h-screen flex-col bg-[#fcfcfc] overflow-x-hidden w-full">
       <Header />
       <main className="flex-1 py-6 md:py-12">
         <div className="container mx-auto px-4 lg:px-12">
@@ -123,19 +124,27 @@ const ProductDetail = () => {
             <span className="text-foreground">{name}</span>
           </nav>
 
-          <div className="grid gap-8 lg:gap-16 lg:grid-cols-2">
+          <div className="grid gap-6 lg:gap-16 lg:grid-cols-2">
             {/* Gallery */}
-            <div className="space-y-4">
-              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative overflow-hidden rounded-2xl border border-border/50 bg-white p-4 sm:p-10 flex items-center justify-center shadow-sm aspect-square lg:aspect-auto lg:h-[600px]">
-                <img src={activeImage} alt={name} className="max-h-full max-w-full object-contain transition-all duration-500 hover:scale-105" />
-                <button className="absolute top-6 right-6 h-10 w-10 bg-secondary rounded-full flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all shadow-sm">
-                  <Box className="h-4 w-4" />
+            <div className="space-y-4 sm:mx-0 overflow-hidden">
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }} 
+                animate={{ opacity: 1, x: 0 }} 
+                className="relative overflow-hidden rounded-2xl border border-border/50 bg-white p-4 sm:p-10 flex items-center justify-center shadow-sm aspect-video sm:aspect-square lg:aspect-auto lg:h-[600px] w-full max-h-[250px] sm:max-h-none"
+              >
+                <img src={activeImage} alt={name} className="max-h-full max-w-full object-contain" />
+                <button className="absolute top-4 right-4 h-8 w-8 sm:h-10 sm:w-10 bg-secondary/80 backdrop-blur-sm rounded-full flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all shadow-sm">
+                  <Box className="h-4 w-4 sm:h-5 sm:w-5" />
                 </button>
               </motion.div>
               {galleryImages.length > 1 && (
-                <div className="flex items-center gap-3 overflow-x-auto pb-2">
+                <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar scrollbar-hide max-w-full">
                   {galleryImages.map((img, i) => (
-                    <button key={i} onClick={() => setActiveImage(img)} className={`h-20 w-20 sm:h-24 sm:w-24 shrink-0 rounded-2xl border-2 p-2 bg-white flex items-center justify-center transition-all ${activeImage === img ? 'border-primary' : 'border-border/50 hover:border-primary/50'}`}>
+                    <button 
+                      key={i} 
+                      onClick={() => setActiveImage(img)} 
+                      className={`h-12 w-12 sm:h-24 sm:w-24 shrink-0 rounded-lg border-2 p-1 bg-white flex items-center justify-center transition-all ${activeImage === img ? 'border-primary' : 'border-border/50 hover:border-primary/50'}`}
+                    >
                       <img src={img} className="max-h-full max-w-full object-contain" alt="" />
                     </button>
                   ))}
@@ -143,15 +152,14 @@ const ProductDetail = () => {
               )}
             </div>
 
-            {/* Info */}
-            <div className="flex flex-col">
-              <div className="mb-8 border-b border-border/50 pb-8">
-                <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-[10px] font-black tracking-widest uppercase mb-4 rounded-sm">{product.brand}</span>
-                <h1 className="text-2xl sm:text-3xl lg:text-5xl font-black uppercase tracking-tighter text-foreground leading-[1] mb-6">{name}</h1>
-                <div className="flex items-center gap-6">
+            <div className="flex flex-col pt-2 sm:pt-0 overflow-hidden">
+              <div className="mb-6 sm:mb-8 border-b border-border/50 pb-6 sm:pb-8">
+                <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-[10px] sm:text-xs font-black tracking-widest uppercase mb-4 rounded-sm">{product.brand}</span>
+                <h1 className="text-xl sm:text-3xl lg:text-5xl font-black uppercase tracking-tighter text-foreground leading-[1.1] mb-2">{name}</h1>
+                <div className="flex items-center gap-4 sm:gap-6 mb-4">
                   <div className="flex items-center gap-1 cursor-pointer" onClick={() => setActiveTab('reviews')}>
                     {[...Array(5)].map((_, i) => (<Star key={i} className={`h-3 w-3 ${i < Math.floor(product.rating || 0) ? 'fill-accent text-accent' : 'text-muted/30'}`} />))}
-                    <span className="text-[10px] font-black text-muted-foreground ml-2 hover:text-primary transition-colors hover:underline">({product.reviewCount || 0} {t('product.reviewsLabel')})</span>
+                    <span className="text-[10px] font-black text-muted-foreground ml-2">({product.reviewCount || 0})</span>
                   </div>
                   <div className="h-4 w-px bg-border" />
                   <span className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1 ${product.stock_status === 'out_of_stock' ? 'text-destructive' : 'text-primary'}`}>
@@ -159,58 +167,61 @@ const ProductDetail = () => {
                     {product.stock_status === 'out_of_stock' ? t('product.outOfStock') : t('product.inStock')}
                   </span>
                 </div>
-              </div>
-
-              <div className="mb-10">
-                <div className="flex items-baseline gap-4 mb-2">
-                  {product.originalPrice && product.originalPrice > product.price && (
-                    <span className="text-xl text-muted-foreground line-through font-bold">{formatPrice(product.originalPrice)} {currency}</span>
-                  )}
-                  <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-primary italic tracking-tighter">{formatPrice(product.price)} <span className="text-lg sm:text-xl font-bold not-italic">{currency}</span></span>
-                  {/* Added category display here, assuming this was the intended placement */}
-                  <span className="text-primary italic">{product.category?.name[language] || product.category_id}</span>
+                
+                <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-4">
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-xl sm:text-3xl lg:text-5xl font-black text-primary italic tracking-tighter whitespace-nowrap">{formatPrice(product.price)} <span className="text-base sm:text-xl font-bold not-italic">{currency}</span></span>
+                    {product.originalPrice && product.originalPrice > product.price && (
+                      <span className="text-sm text-muted-foreground line-through font-bold whitespace-nowrap">{formatPrice(product.originalPrice)} {currency}</span>
+                    )}
+                  </div>
                 </div>
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{t('product.taxIncluded')}</p>
+                <p className="text-[9px] sm:text-xs font-black text-muted-foreground uppercase tracking-widest leading-none mt-2">{t('product.taxIncluded')}</p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
-                <button onClick={handleAdd} disabled={product.stock_status === 'out_of_stock'} className="flex items-center justify-center gap-2 bg-primary text-white p-5 rounded-full text-xs font-black uppercase tracking-wide shadow-xl shadow-primary/20 hover:scale-[1.03] transition-all disabled:opacity-50 whitespace-nowrap">
+              <div className="flex flex-col gap-3 mb-10 w-full">
+                <button 
+                  onClick={handleAdd} 
+                  disabled={product.stock_status === 'out_of_stock'} 
+                  className="flex w-full items-center justify-center gap-3 bg-primary text-white py-4 sm:py-5 px-8 rounded-full text-sm font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-[1.03] active:scale-95 transition-all disabled:opacity-50 min-h-[60px]"
+                >
                   {added ? <Check className="h-5 w-5" /> : <ShoppingCart className="h-5 w-5" />}
                   <span>{added ? t('product.addedToCart') : t('product.addToCart')}</span>
                 </button>
                 <button 
                   onClick={handleQuickBuy}
-                  className="flex items-center justify-center gap-2 border-2 border-foreground text-foreground p-5 rounded-full text-xs font-black uppercase tracking-wide hover:bg-foreground hover:text-white transition-all disabled:opacity-50 whitespace-nowrap" 
+                  className="flex w-full items-center justify-center gap-3 border-2 border-foreground text-foreground py-4 sm:py-5 px-8 rounded-full text-sm font-black uppercase tracking-[0.2em] hover:bg-foreground hover:text-white active:scale-95 transition-all disabled:opacity-50 min-h-[60px]" 
                   disabled={product.stock_status === 'out_of_stock'}
                 >
+                  <Zap className="h-5 w-5 fill-current" />
                   <span>{t('product.quickBuy')}</span>
                 </button>
               </div>
 
               {/* USP Bar */}
-              <div className="grid grid-cols-3 gap-4 border-y border-border/50 py-6 mb-10">
-                <div className="flex flex-col items-center text-center gap-2">
-                  <Truck className="h-5 w-5 text-primary" />
-                  <span className="text-[9px] font-black uppercase tracking-widest leading-none">{t('product.delivery')} <br /> {t('product.delivery48h')}</span>
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 border-y border-border/50 py-6 mb-10">
+                <div className="flex flex-col items-center text-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center"><Truck className="h-5 w-5 text-primary" /></div>
+                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest leading-tight">{t('product.delivery')} <br /> 48H</span>
                 </div>
-                <div className="flex flex-col items-center text-center gap-2">
-                  <Shield className="h-5 w-5 text-primary" />
-                  <span className="text-[9px] font-black uppercase tracking-widest leading-none">{t('product.warrantyLabel')} <br /> {t('product.warranty1y')}</span>
+                <div className="flex flex-col items-center text-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center"><Shield className="h-5 w-5 text-primary" /></div>
+                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest leading-tight">{t('product.warrantyLabel')} <br /> 1 AN</span>
                 </div>
-                <div className="flex flex-col items-center text-center gap-2">
-                  <RotateCcw className="h-5 w-5 text-primary" />
-                  <span className="text-[9px] font-black uppercase tracking-widest leading-none">{t('product.pickup')} <br /> {t('product.pickupStore')}</span>
+                <div className="flex flex-col items-center text-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center"><RotateCcw className="h-5 w-5 text-primary" /></div>
+                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest leading-tight">{t('product.pickup')} <br /> BOUTIQUE</span>
                 </div>
               </div>
 
               {/* Tabs */}
-              <div className="flex border-b border-border/50 mb-6 gap-2">
+              <div className="flex border-b border-border/50 mb-6 overflow-x-auto scrollbar-hide no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
                 {[
                   { id: 'desc', label: t('product.description') },
                   { id: 'specs', label: t('product.specs') },
                   { id: 'reviews', label: `${t('product.reviews')} (${product.reviewCount || 0})` }
                 ].map((tab) => (
-                  <button key={tab.id} onClick={() => setActiveTab(tab.id as any)} className={`pb-4 px-4 text-[10px] font-black tracking-widest uppercase transition-all border-b-2 ${activeTab === tab.id ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>
+                  <button key={tab.id} onClick={() => setActiveTab(tab.id as any)} className={`pb-4 px-4 text-[10px] sm:text-xs font-black tracking-widest uppercase transition-all border-b-2 whitespace-nowrap ${activeTab === tab.id ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>
                     {tab.label}
                   </button>
                 ))}
@@ -226,9 +237,9 @@ const ProductDetail = () => {
                 {activeTab === 'specs' && (
                   <div className="divide-y border border-border/50 rounded-xl overflow-hidden bg-white">
                     {product.specs && Object.keys(product.specs).length > 0 ? Object.entries(product.specs).map(([key, value]) => (
-                      <div key={key} className="flex text-xs">
-                        <span className="w-1/3 shrink-0 bg-secondary/50 px-6 py-4 font-black uppercase tracking-widest text-foreground">{key}</span>
-                        <span className="px-6 py-4 text-muted-foreground font-bold">{value as React.ReactNode}</span>
+                      <div key={key} className="flex text-[10px] sm:text-xs">
+                        <span className="w-2/5 sm:w-1/3 shrink-0 bg-secondary/50 px-4 sm:px-6 py-4 font-black uppercase tracking-widest text-foreground">{key}</span>
+                        <span className="px-4 sm:px-6 py-4 text-muted-foreground font-bold">{value as React.ReactNode}</span>
                       </div>
                     )) : (
                       <p className="p-6 text-xs italic font-bold text-muted-foreground uppercase tracking-widest text-center">{t('product.noSpecs')}</p>
@@ -297,7 +308,7 @@ const ProductDetail = () => {
                 </div>
                 <Link to="/products" className="text-xs font-black uppercase tracking-widest text-primary hover:underline underline-offset-8">{t('product.viewAll')}</Link>
               </div>
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                 {related.map((p, i) => (<ProductCard key={p.id} product={p as any} index={i} />))}
               </div>
             </div>

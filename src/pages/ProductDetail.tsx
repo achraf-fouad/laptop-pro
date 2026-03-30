@@ -206,7 +206,7 @@ const ProductDetail = () => {
                 </div>
                 <div className="flex flex-col items-center text-center gap-3">
                   <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center"><Shield className="h-5 w-5 text-primary" /></div>
-                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest leading-tight">{t('product.warrantyLabel')} <br /> 1 AN</span>
+                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest leading-tight">{t('product.warrantyLabel')} <br /> 30 JOURS</span>
                 </div>
                 <div className="flex flex-col items-center text-center gap-3">
                   <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center"><RotateCcw className="h-5 w-5 text-primary" /></div>

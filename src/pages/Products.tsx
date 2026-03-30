@@ -76,8 +76,8 @@ const Products = () => {
   const filtered = useMemo(() => {
     let result = [...products];
     if (categoryParam) {
-      // Find the selected category and all its children's IDs
-      const getCategoryIds = (slugOrId: string, cats: Category[]): number[] => {
+      // Find the selected category and all its children's IDs + slugs
+      const getCategoryData = (slugOrId: string, cats: Category[]): { ids: number[], slugs: string[] } => {
         const findCat = (list: Category[]): Category | undefined => {
           for (const c of list) {
             if (c.slug === slugOrId || c.id.toString() === slugOrId) return c;
@@ -88,21 +88,40 @@ const Products = () => {
           }
         };
         const target = findCat(cats);
-        if (!target) return [];
+        if (!target) return { ids: [], slugs: [] };
 
         const ids: number[] = [target.id];
-        const collectIds = (children: Category[]) => {
+        const slugs: string[] = [target.slug];
+        const collectData = (children: Category[]) => {
           children.forEach(child => {
             ids.push(child.id);
-            if (child.children) collectIds(child.children);
+            slugs.push(child.slug);
+            if (child.children) collectData(child.children);
           });
         };
-        if (target.children) collectIds(target.children);
-        return ids;
+        if (target.children) collectData(target.children);
+        return { ids, slugs };
       };
 
-      const allowedIds = getCategoryIds(categoryParam, categories);
-      result = result.filter(p => p.category_id && allowedIds.includes(p.category_id));
+      const { ids: allowedIds, slugs: allowedSlugs } = getCategoryData(categoryParam, categories);
+      // Convert to strings — Laravel API returns category_id as string not number, causing includes() to fail
+      const allowedIdStrings = allowedIds.map(id => String(id));
+
+      result = result.filter(p => {
+        // Primary match: by category_id (handle both string and number from API)
+        if (p.category_id !== undefined && p.category_id !== null) {
+          const catIdStr = String(p.category_id);
+          if (allowedIdStrings.includes(catIdStr)) return true;
+        }
+        // Fallback match: by the embedded category object's slug or id
+        if (p.category) {
+          if (allowedIdStrings.includes(String(p.category.id))) return true;
+          if (allowedSlugs.includes(p.category.slug)) return true;
+        }
+        // Last resort: direct slug match
+        if (p.category?.slug === categoryParam) return true;
+        return false;
+      });
     }
     
     if (searchParam) {

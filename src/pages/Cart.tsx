@@ -17,7 +17,8 @@ const Cart = () => {
   const [showForm, setShowForm] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [form, setForm] = useState({ fullName: '', phone: '', city: '', address: '', notes: '' });
+  const [form, setForm] = useState({ fullName: '', phone: '', city: '', address: '', notes: '', shippingMethod: 'city' });
+  const [shippingCost, setShippingCost] = useState(50);
   const currency = t('currency');
 
   const formatPrice = (price: number) => new Intl.NumberFormat('fr-MA').format(price);
@@ -28,10 +29,14 @@ const Cart = () => {
     city: z.string().trim().min(1, t('cart.required')).max(100),
     address: z.string().trim().min(5, t('cart.required')).max(300),
     notes: z.string().max(500).optional(),
+    shippingMethod: z.enum(['casa', 'city']),
   });
 
   const handleChange = (field: string, value: string) => {
     setForm(prev => ({ ...prev, [field]: value }));
+    if (field === 'shippingMethod') {
+      setShippingCost(value === 'casa' ? 25 : 50);
+    }
     if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }));
   };
 
@@ -47,8 +52,8 @@ const Cart = () => {
     try {
       await api.post('/orders', {
         customer_name: form.fullName, customer_phone: form.phone,
-        shipping_address: `${form.city}, ${form.address}`, notes: form.notes,
-        total_amount: totalPrice,
+        shipping_address: `${form.city}, ${form.address} (${form.shippingMethod === 'casa' ? 'Casablanca' : 'Hors Casablanca'})`, notes: form.notes,
+        total_amount: totalPrice + shippingCost,
         items: items.map(item => ({ product_id: item.product.id, quantity: item.quantity, price: item.product.price }))
       });
       setOrderPlaced(true);
@@ -82,7 +87,7 @@ const Cart = () => {
               </Link>
             </motion.div>
           ) : items.length === 0 ? (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-10 sm:mt-16 flex flex-col items-center text-center bg-white p-10 sm:p-20 rounded-3xl border border-dashed border-border">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-10 sm:mt-16 flex flex-col items-center text-center bg-white p-10 sm:p-20 rounded-3xl border border-dashed border-border" style={{ marginLeft: 'auto', marginRight: 'auto' }}>
               <div className="h-20 w-20 rounded-full bg-secondary flex items-center justify-center mb-8"><ShoppingBag className="h-10 w-10 text-muted-foreground/30" /></div>
               <p className="text-xl font-bold uppercase tracking-widest text-muted-foreground mb-8">{t('cart.empty')}</p>
               <Link to="/products" className="inline-flex items-center gap-4 bg-primary text-white px-10 py-5 rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-primary/20">
@@ -133,8 +138,8 @@ const Cart = () => {
                   <h3 className="text-xl font-black uppercase tracking-tighter mb-8 italic">{t('cart.summary')}</h3>
                   <div className="space-y-6 text-xs font-bold uppercase tracking-widest">
                     <div className="flex justify-between items-center pb-4 border-b border-border/10"><span className="text-muted-foreground/60">{t('cart.subtotal')}</span><span className="text-foreground">{formatPrice(totalPrice)} {currency}</span></div>
-                    <div className="flex justify-between items-center pb-4 border-b border-border/10"><span className="text-muted-foreground/60">{t('cart.shipping')}</span><span className="text-primary italic">{t('cart.shippingFree')}</span></div>
-                    <div className="flex justify-between items-center pt-2"><span className="text-lg font-black uppercase tracking-tighter">{t('cart.totalTTC')}</span><span className="text-2xl font-black italic tracking-tighter text-primary">{formatPrice(totalPrice)} {currency}</span></div>
+                    <div className="flex justify-between items-center pb-4 border-b border-border/10"><span className="text-muted-foreground/60">{t('cart.shipping')}</span><span className="text-primary italic">{formatPrice(shippingCost)} {currency}</span></div>
+                    <div className="flex justify-between items-center pt-2"><span className="text-lg font-black uppercase tracking-tighter">{t('cart.total')}</span><span className="text-2xl font-black italic tracking-tighter text-primary">{formatPrice(totalPrice + shippingCost)} {currency}</span></div>
                   </div>
                   {!showForm ? (
                     <button onClick={() => setShowForm(true)} className="mt-10 w-full bg-primary text-white py-5 rounded-full text-xs font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.03] transition-all">{t('cart.checkout')}</button>
@@ -152,6 +157,20 @@ const Cart = () => {
                     <motion.form initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} onSubmit={handleSubmit} className="bg-white rounded-3xl border border-primary/20 p-8 shadow-2xl relative z-10">
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-black uppercase tracking-[0.3em] px-4 py-1.5 rounded-full">{t('cart.orderForm')}</div>
                       <div className="space-y-6 pt-4">
+                        <div className="space-y-3">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-2">{t('cart.shipping').toUpperCase()}</p>
+                          <div className="grid gap-2">
+                            <label className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer ${form.shippingMethod === 'casa' ? 'border-primary bg-primary/5' : 'border-secondary bg-secondary/30'}`}>
+                              <input type="radio" name="shippingMethod" value="casa" checked={form.shippingMethod === 'casa'} onChange={() => handleChange('shippingMethod', 'casa')} className="w-4 h-4 text-primary focus:ring-primary border-muted-foreground/20" />
+                              <span className="text-xs font-bold uppercase tracking-wide">{t('cart.shippingCasablanca')}</span>
+                            </label>
+                            <label className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer ${form.shippingMethod === 'city' ? 'border-primary bg-primary/5' : 'border-secondary bg-secondary/30'}`}>
+                              <input type="radio" name="shippingMethod" value="city" checked={form.shippingMethod === 'city'} onChange={() => handleChange('shippingMethod', 'city')} className="w-4 h-4 text-primary focus:ring-primary border-muted-foreground/20" />
+                              <span className="text-xs font-bold uppercase tracking-wide">{t('cart.shippingOther')}</span>
+                            </label>
+                          </div>
+                        </div>
+
                         <div>
                           <input value={form.fullName} onChange={e => handleChange('fullName', e.target.value)} placeholder={t('cart.fullNamePlaceholder')} className={`w-full bg-secondary/30 border-none rounded-xl px-5 py-4 text-sm font-bold placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-primary/20 ${errors.fullName ? 'ring-2 ring-destructive/20' : ''}`} />
                           {errors.fullName && <p className="mt-1 text-[10px] font-black text-destructive uppercase tracking-widest pl-2">{errors.fullName}</p>}

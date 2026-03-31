@@ -1,16 +1,23 @@
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin, ChevronRight, CreditCard } from 'lucide-react';
+import { Facebook, Instagram , Mail, Phone, MapPin, ChevronRight, CreditCard } from 'lucide-react';
 
 const Footer = () => {
   const { t } = useLanguage();
 
   const categories = [
-    { label: t('footer.cat.laptops'), to: '/products?category=laptops' },
-    { label: t('footer.cat.screens'), to: '/products?category=screens' },
-    { label: t('footer.cat.peripherals'), to: '/products?category=peripherals' },
-    { label: t('footer.cat.gaming'), to: '/products?category=gaming' },
-    { label: t('footer.cat.printers'), to: '/products?category=printers' },
+    { label: t('categories.laptops'), to: '/products?category=laptops-portables' },
+    { label: t('categories.pcComponents'), to: '/products?category=pc-components' },
+    { label: t('categories.spareParts'), to: '/products?category=spare-parts' },
+    { label: t('categories.monitors'), to: '/products?category=screens-monitors' },
+    { label: t('categories.peripherals'), to: '/products?category=pc-peripherals' },
+    { label: t('categories.chairs'), to: '/products?category=chairs' },
+    { label: t('categories.bags'), to: '/products?category=bags-cases' },
+    { label: t('categories.storage'), to: '/products?category=storage' },
+    { label: t('categories.cables'), to: '/products?category=cables' },
+    { label: t('categories.printers'), to: '/products?category=printers-scanners' },
+    { label: t('categories.gaming'), to: '/products?category=consoles-gaming' },
+    { label: t('categories.camera'), to: '/products?category=camera-universe' },
   ];
 
   const usefulLinks = [
@@ -18,7 +25,6 @@ const Footer = () => {
     { label: t('footer.account'), to: '#' },
     { label: t('footer.trackOrder'), to: '#' },
     { label: t('footer.deliveryModes'), to: '#' },
-    { label: t('footer.legal'), to: '#' },
   ];
 
   return (
@@ -42,14 +48,12 @@ const Footer = () => {
               {t('footer.description')}
             </p>
             <div className="flex items-center gap-4">
-              <a href="https://www.facebook.com/profile.php?id=61583715811645" target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white hover:-translate-y-1 transition-all duration-300">
+              <a href="https://web.facebook.com/profile.php?id=61583715811645" target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white hover:-translate-y-1 transition-all duration-300">
                 <Facebook className="h-5 w-5" />
               </a>
-              {[Instagram, Twitter, Youtube].map((Icon, i) => (
-                <a key={i} href="#" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white hover:-translate-y-1 transition-all duration-300">
-                  <Icon className="h-5 w-5" />
-                </a>
-              ))}
+              <a href="" target="_blank" rel="noopener noreferrer" className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white hover:-translate-y-1 transition-all duration-300">
+                <Instagram className="h-5 w-5" />
+              </a>
             </div>
           </div>
 
@@ -93,7 +97,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-1">{t('footer.headquarters')}</p>
-                  <p className="text-xs font-bold uppercase tracking-wider text-white">Casablanca, Maarif, Rue des Technologie 20450</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-white">Casablanca, Derb Ghallef, Souk Selk</p>
                 </div>
               </li>
               <li className="flex items-start gap-4">

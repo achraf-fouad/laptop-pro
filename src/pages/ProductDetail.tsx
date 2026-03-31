@@ -202,11 +202,11 @@ const ProductDetail = () => {
               <div className="grid grid-cols-3 gap-2 sm:gap-4 border-y border-border/50 py-6 mb-10">
                 <div className="flex flex-col items-center text-center gap-3">
                   <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center"><Truck className="h-5 w-5 text-primary" /></div>
-                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest leading-tight">{t('product.delivery')} <br /> 48H</span>
+                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest leading-tight">{t('product.delivery')} <br /> {t('product.delivery48h')}</span>
                 </div>
                 <div className="flex flex-col items-center text-center gap-3">
                   <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center"><Shield className="h-5 w-5 text-primary" /></div>
-                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest leading-tight">{t('product.warrantyLabel')} <br /> 30 JOURS</span>
+                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest leading-tight">{t('product.warranty1y')}</span>
                 </div>
                 <div className="flex flex-col items-center text-center gap-3">
                   <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center"><RotateCcw className="h-5 w-5 text-primary" /></div>

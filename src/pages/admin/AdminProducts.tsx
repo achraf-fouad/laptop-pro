@@ -259,16 +259,16 @@ const AdminProducts = () => {
         </button>
       </div>
 
-      <div className="rounded-3xl border border-border/40 bg-white shadow-sm overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="rounded-3xl border border-border/40 bg-white shadow-sm overflow-x-auto">
+        <table className="w-full min-w-[640px] text-sm">
           <thead>
             <tr className="bg-secondary/20 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 border-b border-border/20">
-              <th className="px-8 py-5 text-start">Produit</th>
-              <th className="px-8 py-5 text-start">Catégorie</th>
-              <th className="px-8 py-5 text-start">Marque</th>
-              <th className="px-8 py-5 text-end">Prix</th>
-              <th className="px-8 py-5 text-start">Stock</th>
-              <th className="px-8 py-5 text-end">Actions</th>
+              <th className="px-4 sm:px-8 py-5 text-start">Produit</th>
+              <th className="px-4 sm:px-8 py-5 text-start hidden md:table-cell">Catégorie</th>
+              <th className="px-4 sm:px-8 py-5 text-start hidden md:table-cell">Marque</th>
+              <th className="px-4 sm:px-8 py-5 text-end">Prix</th>
+              <th className="px-4 sm:px-8 py-5 text-start hidden sm:table-cell">Stock</th>
+              <th className="px-4 sm:px-8 py-5 text-end">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/20">
@@ -296,25 +296,25 @@ const AdminProducts = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="px-8 py-5">
+                  <td className="px-4 sm:px-8 py-5 hidden md:table-cell">
                     <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{p.category?.name.fr || 'N/A'}</span>
                   </td>
-                  <td className="px-8 py-5">
+                  <td className="px-4 sm:px-8 py-5 hidden md:table-cell">
                     <span className="text-[10px] font-black uppercase tracking-widest text-primary italic font-bold">{p.brand}</span>
                   </td>
-                  <td className="px-8 py-5 text-end">
+                  <td className="px-4 sm:px-8 py-5 text-end">
                     <span className="text-sm font-black italic tracking-tighter text-primary">{p.price.toLocaleString()} DH</span>
                   </td>
-                  <td className="px-8 py-5">
+                  <td className="px-4 sm:px-8 py-5 hidden sm:table-cell">
                     <StatusBadge status={p.stock_status} />
                   </td>
-                  <td className="px-4 sm:px-8 py-5 text-end">
+                  <td className="px-3 sm:px-8 py-5 text-end">
                     <div className="flex items-center justify-end gap-1.5 sm:gap-2 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => openEditDialog(p)} className="h-8 w-8 sm:h-9 sm:w-9 flex items-center justify-center rounded-lg bg-secondary text-muted-foreground hover:bg-primary hover:text-white transition-all shadow-sm">
-                        <Pencil className="h-3.5 w-3.5 sm:h-4 w-4" />
+                      <button onClick={() => openEditDialog(p)} className="h-9 w-9 flex items-center justify-center rounded-lg bg-secondary text-muted-foreground hover:bg-primary hover:text-white transition-all shadow-sm" title="Modifier">
+                        <Pencil className="h-4 w-4" />
                       </button>
-                      <button onClick={() => handleDelete(p.id)} className="h-8 w-8 sm:h-9 sm:w-9 flex items-center justify-center rounded-lg bg-secondary text-muted-foreground hover:bg-destructive hover:text-white transition-all shadow-sm">
-                        <Trash2 className="h-3.5 w-3.5 sm:h-4 w-4" />
+                      <button onClick={() => handleDelete(p.id)} className="h-9 w-9 flex items-center justify-center rounded-lg bg-secondary text-muted-foreground hover:bg-destructive hover:text-white transition-all shadow-sm" title="Supprimer">
+                        <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
                   </td>

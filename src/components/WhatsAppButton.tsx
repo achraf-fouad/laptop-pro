@@ -19,7 +19,7 @@ const WhatsAppButton = () => {
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(t('whatsapp.message'))}`;
 
   return (
-    <div className="fixed bottom-24 end-4 sm:end-6 z-40 flex flex-col items-end gap-2 sm:items-end gap-2">
+    <div className="fixed bottom-4 end-4 sm:end-6 z-40 flex flex-col items-end gap-2 sm:items-end gap-2">
       <AnimatePresence>
         {showTooltip && (
           <motion.div

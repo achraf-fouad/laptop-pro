@@ -53,6 +53,39 @@ class OrderController extends Controller
             \Illuminate\Support\Facades\Log::error('Failed to send order notification: ' . $e->getMessage());
         }
 
+        // Send WhatsApp Notification to Admin via API
+        try {
+            $adminPhone = '+212644459980';
+            // Default configured for UltraMSG, replace with any other WhatsApp API if needed
+            $apiUrl = env('WHATSAPP_API_URL', 'https://api.ultramsg.com/YOUR_INSTANCE_ID/messages/chat');
+            $token = env('WHATSAPP_API_TOKEN', 'YOUR_TOKEN');
+
+            if ($token !== 'YOUR_TOKEN') {
+                $orderFresh = $order->fresh('orderItems.product');
+                
+                $waMessage = "*Nouvelle Commande (MarocLaptop)*\n\n";
+                $waMessage .= "*Client:* " . $orderFresh->customer_name . "\n";
+                $waMessage .= "*Téléphone:* " . $orderFresh->customer_phone . "\n";
+                $waMessage .= "*Adresse:* " . $orderFresh->shipping_address . "\n\n";
+
+                $waMessage .= "*Produits:*\n";
+                foreach ($orderFresh->orderItems as $item) {
+                     $productName = $item->product ? (is_array($item->product->name) ? ($item->product->name['fr'] ?? 'Produit') : (json_decode($item->product->name, true)['fr'] ?? $item->product->name)) : 'Produit';
+                     $waMessage .= "{$item->quantity}x {$productName} - {$item->price} MAD\n";
+                }
+
+                $waMessage .= "\n*Total:* " . $orderFresh->total_amount . " MAD\n";
+
+                \Illuminate\Support\Facades\Http::post($apiUrl, [
+                    'token' => $token,
+                    'to' => $adminPhone,
+                    'body' => $waMessage,
+                ]);
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to send WhatsApp API notification: ' . $e->getMessage());
+        }
+
         return $order->load('orderItems');
     }
 

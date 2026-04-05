@@ -59,6 +59,14 @@ const Cart = () => {
       setOrderPlaced(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
       toast({ title: t('cart.orderSuccess') });
+      
+      // WhatsApp notification
+      const itemsList = items.map(item => `${item.quantity}x ${item.product.name[language] || item.product.name.fr || item.product.name.en} - ${formatPrice(item.product.price * item.quantity)} ${currency}`).join('\n');
+      const waMessage = `*Nouvelle Commande (MarocLaptop)*\n\n*Client:* ${form.fullName}\n*Téléphone:* ${form.phone}\n*Ville:* ${form.city}\n*Adresse:* ${form.address}\n\n*Produits:*\n${itemsList}\n\n*Sous-total:* ${formatPrice(totalPrice)} ${currency}\n*Livraison:* ${formatPrice(shippingCost)} ${currency}\n*Total:* ${formatPrice(totalPrice + shippingCost)} ${currency}${form.notes ? `\n\n*Notes:* ${form.notes}` : ''}`;
+      
+      const waUrl = `https://wa.me/212644459980?text=${encodeURIComponent(waMessage)}`;
+      window.open(waUrl, '_blank');
+      
       clearCart();
     } catch {
       toast({ title: t('cart.orderError'), description: t('cart.orderErrorDesc'), variant: 'destructive' });
@@ -106,7 +114,7 @@ const Cart = () => {
                 {items.map(item => (
                   <motion.div key={item.product.id} layout className="group bg-white rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center gap-6">
                     <Link to={`/product/${item.product.id}`} className="shrink-0 h-24 w-24 bg-secondary p-2 rounded-xl flex items-center justify-center">
-                      <img src={item.product.images?.[0]} alt={item.product.name[language] || item.product.name.fr} className="max-h-full max-w-full object-contain group-hover:scale-110 transition-transform duration-500" />
+                      <img src={item.product.images?.[0]} alt={item.product.name[language] || item.product.name.fr} className="h-full w-full object-contain group-hover:scale-110 transition-transform duration-500" />
                     </Link>
   <div className="flex-1 min-w-0 pointer-events-none sm:pointer-events-auto">
     <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1 underline underline-offset-4">{item.product.brand}</p>

@@ -130,9 +130,9 @@ const ProductDetail = () => {
               <motion.div 
                 initial={{ opacity: 0, x: -20 }} 
                 animate={{ opacity: 1, x: 0 }} 
-                className="relative overflow-hidden rounded-2xl border border-border/50 bg-white p-4 sm:p-10 flex items-center justify-center shadow-sm aspect-video sm:aspect-square lg:aspect-auto lg:h-[600px] w-full max-h-[250px] sm:max-h-none"
+                className="relative overflow-hidden rounded-2xl border border-border/50 bg-white p-4 sm:p-10 flex items-center justify-center shadow-sm aspect-square lg:aspect-auto lg:h-[600px] w-full max-h-[350px] sm:max-h-none"
               >
-                <img src={activeImage} alt={name} className="max-h-full max-w-full object-contain" />
+                <img src={activeImage} alt={name} className="h-full w-full object-contain" />
                 <button className="absolute top-4 right-4 h-8 w-8 sm:h-10 sm:w-10 bg-secondary/80 backdrop-blur-sm rounded-full flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all shadow-sm">
                   <Box className="h-4 w-4 sm:h-5 sm:w-5" />
                 </button>
@@ -145,7 +145,7 @@ const ProductDetail = () => {
                       onClick={() => setActiveImage(img)} 
                       className={`h-12 w-12 sm:h-24 sm:w-24 shrink-0 rounded-lg border-2 p-1 bg-white flex items-center justify-center transition-all ${activeImage === img ? 'border-primary' : 'border-border/50 hover:border-primary/50'}`}
                     >
-                      <img src={img} className="max-h-full max-w-full object-contain" alt="" />
+                      <img src={img} className="h-full w-full object-contain" alt="" />
                     </button>
                   ))}
                 </div>

@@ -65,20 +65,20 @@ const CategoriesSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1, duration: 0.5 }}
-              className={`group relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 min-h-[180px] sm:min-h-[220px] lg:min-h-0 ${cat.span}`}
+              className={`group relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 min-h-[220px] sm:min-h-[260px] lg:min-h-0 ${cat.span}`}
             >
-              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-all duration-500 z-10" />
+              <div className="absolute bottom-0 left-0 right-0 h-2/3 bg-gradient-to-t from-black/95 via-black/40 to-transparent z-10 transition-all duration-500" />
               <img src={cat.image} alt={cat.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-              <div className="absolute inset-0 z-20 p-4 sm:p-6 lg:p-8 flex flex-col justify-end">
-                <span className="text-[10px] font-black uppercase tracking-widest text-primary mb-2 opacity-0 -translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+              <div className="absolute bottom-0 left-0 right-0 z-20 p-4 sm:p-6 flex flex-col justify-end">
+                <span className="text-[10px] font-black uppercase tracking-widest text-primary mb-1 opacity-0 -translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                   {cat.subtitle}
                 </span>
-                <h3 className="text-lg sm:text-xl lg:text-2xl font-black text-white uppercase tracking-tighter translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                <h3 className="text-lg sm:text-lg lg:text-xl font-black text-white uppercase tracking-tighter translate-y-2 group-hover:translate-y-0 transition-all duration-300 leading-tight">
                   {cat.title}
                 </h3>
                 <Link
                   to={cat.link}
-                  className="mt-6 inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white border-b-2 border-primary w-fit pb-1 opacity-0 group-hover:opacity-100 transition-all delay-100 duration-300"
+                  className="mt-2 lg:mt-4 inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white border-b-2 border-primary w-fit pb-1 opacity-0 group-hover:opacity-100 transition-all delay-100 duration-300"
                 >
                   {t('categories.discoverRange')}
                   <ChevronRight className="h-3 w-3" />

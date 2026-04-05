@@ -1,24 +1,18 @@
 ---
 deployment:
   tasks:
-    # 🎨 DEPLOY FRONTEND (React build) to public_html
-    - export DEPLOYPATH=/home/$USER/public_html
-    - /bin/cp -R dist/. $DEPLOYPATH/
-
-    # ⚙️ DEPLOY BACKEND (Laravel) - preserve production .env
-    - export BACKENDPATH=/home/$USER/backend
+    - export DEPLOYPATH=/home/maronqrc/public_html
+    - /bin/cp -Rf dist/assets $DEPLOYPATH/assets
+    - /bin/cp -f dist/index.html $DEPLOYPATH/index.html
+    - /bin/cp -f dist/robots.txt $DEPLOYPATH/robots.txt
+    - /bin/cp -f dist/sitemap.xml $DEPLOYPATH/sitemap.xml 2>/dev/null || true
+    - /bin/cp -Rf dist/images $DEPLOYPATH/images 2>/dev/null || true
+    - /bin/cp -Rf dist/favicon.svg $DEPLOYPATH/favicon.svg 2>/dev/null || true
+    - /bin/cp -Rf dist/favicon.ico $DEPLOYPATH/favicon.ico 2>/dev/null || true
+    - export BACKENDPATH=/home/maronqrc/backend
     - /bin/mkdir -p $BACKENDPATH
-    - /bin/cp -Rn backend/. $BACKENDPATH/
-    - /bin/cp -R backend/app $BACKENDPATH/
-    - /bin/cp -R backend/routes $BACKENDPATH/
-    - /bin/cp -R backend/config $BACKENDPATH/
-    - /bin/cp -R backend/database $BACKENDPATH/
-    - /bin/cp -R backend/resources $BACKENDPATH/
-    - /bin/cp -R backend/public $BACKENDPATH/
-    - /bin/cp backend/composer.json $BACKENDPATH/composer.json
-
-    # 🚀 Run post-deploy optimizations
-    - cd $BACKENDPATH && /usr/local/bin/php artisan config:clear
-    - cd $BACKENDPATH && /usr/local/bin/php artisan cache:clear
-    - cd $BACKENDPATH && /usr/local/bin/php artisan view:clear
-    - cd $BACKENDPATH && /usr/local/bin/php artisan optimize
+    - /bin/cp -Rf backend/app $BACKENDPATH/
+    - /bin/cp -Rf backend/routes $BACKENDPATH/
+    - /bin/cp -Rf backend/config $BACKENDPATH/
+    - /bin/cp -Rf backend/database $BACKENDPATH/
+    - /bin/cp -Rf backend/resources $BACKENDPATH/

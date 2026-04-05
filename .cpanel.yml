@@ -1,11 +1,24 @@
 ---
 deployment:
   tasks:
-    # 🎨 DEPLOY FRONTEND (React) to public_html
+    # 🎨 DEPLOY FRONTEND (React build) to public_html
     - export DEPLOYPATH=/home/$USER/public_html
-    - /bin/cp -R dist/* $DEPLOYPATH
+    - /bin/cp -R dist/. $DEPLOYPATH/
 
-    # ⚙️ DEPLOY BACKEND (Laravel) to a separate folder for security
+    # ⚙️ DEPLOY BACKEND (Laravel) - preserve production .env
     - export BACKENDPATH=/home/$USER/backend
     - /bin/mkdir -p $BACKENDPATH
-    - /bin/cp -R backend/* $BACKENDPATH
+    - /bin/cp -Rn backend/. $BACKENDPATH/
+    - /bin/cp -R backend/app $BACKENDPATH/
+    - /bin/cp -R backend/routes $BACKENDPATH/
+    - /bin/cp -R backend/config $BACKENDPATH/
+    - /bin/cp -R backend/database $BACKENDPATH/
+    - /bin/cp -R backend/resources $BACKENDPATH/
+    - /bin/cp -R backend/public $BACKENDPATH/
+    - /bin/cp backend/composer.json $BACKENDPATH/composer.json
+
+    # 🚀 Run post-deploy optimizations
+    - cd $BACKENDPATH && /usr/local/bin/php artisan config:clear
+    - cd $BACKENDPATH && /usr/local/bin/php artisan cache:clear
+    - cd $BACKENDPATH && /usr/local/bin/php artisan view:clear
+    - cd $BACKENDPATH && /usr/local/bin/php artisan optimize
